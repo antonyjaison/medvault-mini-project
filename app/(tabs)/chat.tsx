@@ -11,6 +11,7 @@ import {
   Send,
 } from "react-native-gifted-chat";
 import { Ionicons } from "@expo/vector-icons";
+import { BASE_URL } from '@env'
 
 export default function TabTwoScreen() {
   const colorScheme = useColorScheme();
@@ -33,11 +34,29 @@ export default function TabTwoScreen() {
     ]);
   }, []);
 
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
-    );
-  }, []);
+  const onSend = useCallback(async (messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
+    const api = `${BASE_URL}/chat/${text}`;
+    const response = await fetch(api);
+    const data = await response.json()
+
+    if (data) {
+      setMessages(previousMessages => GiftedChat.append(previousMessages, {
+        _id: new Date().toISOString(),
+        text: data,
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: "Bloom AI",
+          avatar: "https://github.com/shadcn.png",
+        },
+      }));
+    } else {
+      console.log("No data");
+    }
+
+  }, [text]);
+
 
   const renderInputToolbar = (props: any) => {
     return (
