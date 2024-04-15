@@ -7,6 +7,8 @@ import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { Ionicons, AntDesign, Entypo } from "@expo/vector-icons";
+import HomeHeaderRight from "@/components/HomeHeaderRight";
+import HomeHeaderTitle from "@/components/HomeHeaderTitle";
 
 
 export default function TabLayout() {
@@ -30,23 +32,15 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
+          headerTitle: () => <HomeHeaderTitle />,
+          headerRight: () => <HomeHeaderRight />,
           tabBarIcon: ({ color }) => (
             <Ionicons name="home-outline" size={20} color={color} />
           ),
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? "light"].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerStyle: {
+            height: 120,
+            backgroundColor:"#16161A"
+          },
         }}
       />
       <Tabs.Screen

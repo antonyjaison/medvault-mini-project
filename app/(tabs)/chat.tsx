@@ -12,24 +12,46 @@ import {
 } from "react-native-gifted-chat";
 import { Ionicons } from "@expo/vector-icons";
 import { BASE_URL } from '@env'
+import * as ImagePicker from 'expo-image-picker';
 
 export default function TabTwoScreen() {
   const colorScheme = useColorScheme();
 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [text, setText] = useState("");
+  const [image, setImage] = useState(null);
+
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result?.assets[0].uri);
+    }
+  };
+
+
 
   useEffect(() => {
     setMessages([
       {
         _id: 1,
-        text: "Hello developer",
+        text: "Hello, I am Bloom AI how can i assist you!",
         createdAt: new Date(),
         user: {
           _id: 2,
           name: "React Native",
           avatar: "https://github.com/shadcn.png",
         },
+        image: ""
       },
     ]);
   }, []);
@@ -50,6 +72,7 @@ export default function TabTwoScreen() {
           name: "Bloom AI",
           avatar: "https://github.com/shadcn.png",
         },
+        image: ""
       }));
     } else {
       console.log("No data");
@@ -68,12 +91,12 @@ export default function TabTwoScreen() {
         }}
         containerStyle={{
           // backgroundColor: Colors[colorScheme ?? "light"].chatInputColor,
-          backgroundColor:"transparent",
+          backgroundColor: "transparent",
           borderRadius: 30,
           marginHorizontal: 10,
           marginBottom: 5,
-          borderWidth:1,
-          borderColor:Colors[colorScheme ?? "light"].chatInputColor
+          borderWidth: 1,
+          borderColor: Colors[colorScheme ?? "light"].chatInputColor
         }}
       />
     );
@@ -91,7 +114,7 @@ export default function TabTwoScreen() {
               borderRadius: 10,
               justifyContent: "center",
               alignItems: "center",
-              marginRight:-5
+              marginRight: -5
             }}
           >
             <View
@@ -108,14 +131,14 @@ export default function TabTwoScreen() {
           <View
             style={{
               // backgroundColor: Colors[colorScheme ?? "light"].chatInputColor,
-              backgroundColor:"transparent",
-              borderRadius:30
+              backgroundColor: "transparent",
+              borderRadius: 30
             }}
             className="flex-1 flex-row items-center "
           >
             <TouchableOpacity
               className="mr-4"
-              onPress={() => console.log("camera button")}
+              onPress={pickImage}
             >
               <Ionicons
                 name="camera-outline"
@@ -192,6 +215,14 @@ export default function TabTwoScreen() {
     )
   }
 
+  const renderChatEmpty = () => {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text className="text-xl">No messages</Text>
+      </View>
+    )
+  }
+
   return (
     <View
       style={{
@@ -225,9 +256,11 @@ export default function TabTwoScreen() {
         onInputTextChanged={setText}
         renderBubble={renderBubble}
         renderAvatar={renderAvatar}
+        // renderChatEmpty={renderChatEmpty}
         textInputProps={{
           color: Colors[colorScheme ?? "light"].text,
         }}
+
       />
     </View>
   );
