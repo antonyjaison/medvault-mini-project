@@ -4,6 +4,8 @@ import AuthProgress from "@/components/auth-progress";
 import { useColorScheme } from "@/components/useColorScheme";
 import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
+import NameInput from "./_components/name-input";
+import CityInput from "./_components/city-input";
 
 const UserDetails = () => {
   const colorScheme = useColorScheme();
@@ -19,7 +21,8 @@ const UserDetails = () => {
       </View>
 
       <View className=" w-full h-10 mt-10">
-        
+        {/* <NameInput/> */}
+        <CityInput/>
       </View>
 
 

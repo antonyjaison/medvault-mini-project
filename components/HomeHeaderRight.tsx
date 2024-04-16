@@ -10,7 +10,7 @@ const HomeHeaderRight = () => {
       <View className="bg-[#2F2F40] rounded-full mr-3 overflow-hidden">
         <TouchableNativeFeedback
           background={TouchableNativeFeedback.Ripple("#ECDEDE", true)}
-          onPress={() => router.push("/(tabs)/chat")}
+          onPress={() => router.push("/(auth)/details")}
           useForeground
         >
           <View
