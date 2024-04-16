@@ -1,14 +1,21 @@
+import DocumentsSection from "@/components/DocumentsSection";
+import InsightSection from "@/components/InsightSection";
 import { View } from "@/components/Themed";
+import Footer from "@/components/footer";
+import MedicationIntakeStatus from "@/components/medication-intake-status";
 import Timer from "@/components/timer";
+import { ScrollView } from "react-native";
 
 export default function TabOneScreen() {
 
   return (
-    <View className="justify-center items-center h-full">
-      <Timer name="Antony" age={21} gender="M"/>
-      <Timer name="Jibin" age={22} gender="M"/>
-      <Timer name="Aarsha" gender="F"/>
-      <Timer name="Vishnu" gender="M"/>
-    </View>
+    <ScrollView>
+      <View style={{ gap: 34 }} className="h-full bg-[#16161A] w-full px-4 flex-col py-4">
+        <MedicationIntakeStatus />
+        <DocumentsSection />
+        <InsightSection />
+        <Footer/>
+      </View>
+    </ScrollView>
   );
 }
