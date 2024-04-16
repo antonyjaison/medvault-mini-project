@@ -1,7 +1,7 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
+import { Image, Pressable } from "react-native";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
@@ -15,6 +15,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarHideOnKeyboard:true,
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
@@ -72,9 +73,22 @@ export default function TabLayout() {
         name="chat"
         options={{
           title: "Chat",
+          headerTitle:"",
+          headerStyle:{
+            backgroundColor: Colors[colorScheme ?? "light"].headerColor,
+            height:130
+          },
+          tabBarStyle:{
+            // marginTop:10,
+            // paddingTop:10
+          },
+          
           tabBarIcon: ({ color }) => (
             <Ionicons name="chatbubble-outline" size={20} color={color} />
           ),
+          headerLeft: () => (
+            <Image className="ml-6" source={require("@/assets/images/avatar.png")}/>
+          )
         }}
       />
     </Tabs>

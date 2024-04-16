@@ -9,6 +9,10 @@ export default {
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorLight,
     tabBarColor:"#fff",
+    headerColor:"#fff",
+    lineColor:"#000",
+    chatInputColor:"#ddd"
+
   },
   dark: {
     text: '#fff',
@@ -17,5 +21,8 @@ export default {
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,
     tabBarColor:"#1C1E27",
+    headerColor:"#16161A",
+    lineColor:"#D6D6D6",
+    chatInputColor:"#28292F"
   },
 };
