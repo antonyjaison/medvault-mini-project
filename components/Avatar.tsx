@@ -7,7 +7,7 @@ import React from "react";
 const Avatar = () => {
   // const { user } = useUser();
   return (
-    <Link className="h-10 w-10" href={"/profile/"}>
+    <Link className="h-10 w-10" href="/profile/">
       <View className="rounded-full">
         <Image
           className=" rounded-full w-10 h-10"

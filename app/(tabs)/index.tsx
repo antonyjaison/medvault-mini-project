@@ -11,6 +11,7 @@ export default function TabOneScreen() {
   return (
     <ScrollView>
       <View style={{ gap: 34 }} className="h-full bg-[#16161A] w-full px-4 flex-col py-4">
+        <Timer percentage={35} circleWidth={200}/>
         <MedicationIntakeStatus />
         <DocumentsSection />
         <InsightSection />
