@@ -21,7 +21,7 @@ const UserDetails = () => {
       </View>
 
       <View className=" w-full h-10 mt-10">
-        {/* <NameInput/> */}
+        <NameInput/>
         <CityInput/>
       </View>
 
