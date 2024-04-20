@@ -11,7 +11,7 @@ type TimerProps = {
   circleWidth: number,
   radius: number,
   strokeWidth: number,
-  backgroundStrokeColor:string,
+  backgroundStrokeColor: string,
   gradient: GradientType[]
 }
 
