@@ -1,10 +1,14 @@
 import { StyleSheet, View } from "react-native";
 
-export const Divider = () => <View style={styles.divider} />;
+type Dividertype = {
+    height?: number,
+    backgroundColor?: string,
+}
+
+export const Divider = ({ height, backgroundColor }: Dividertype) => <View style={{ height: height, backgroundColor: backgroundColor }} />;
 
 const styles = StyleSheet.create({
     divider: {
-        height: StyleSheet.hairlineWidth,
         backgroundColor: "#7F8487",
     },
 })

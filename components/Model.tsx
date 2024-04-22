@@ -23,12 +23,12 @@ const Model = ({ children, isVisible, onClose, title }: ModelProps) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <View className=" w-full rounded-[10px] h-fit flex-row items-center justify-between px-5 pt-4 pb-3">
-            <Text className="font-medium text-2xl text-white">{title}</Text>
+            <Text className="font-medium text-lg text-white">{title}</Text>
             <Pressable onPress={onClose}>
               <AntDesign name="close" color="#fff" size={20} />
             </Pressable>
           </View>
-          <Divider />
+          <Divider backgroundColor="#4E4E4E" height={1} />
           {children}
         </View>
       </View>
