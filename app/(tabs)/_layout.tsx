@@ -17,7 +17,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarHideOnKeyboard:true,
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
@@ -39,7 +39,7 @@ export default function TabLayout() {
           ),
           headerStyle: {
             height: 120,
-            backgroundColor:"#16161A"
+            backgroundColor: "#16161A"
           },
         }}
       />
@@ -56,10 +56,14 @@ export default function TabLayout() {
         name="documents"
         options={{
           title: "Documents",
-          headerTitle: "Documents",
+          headerTitle: () => <HomeHeaderTitle />,
           tabBarIcon: ({ color }) => (
             <Ionicons name="document-outline" size={20} color={color} />
           ),
+          headerStyle: {
+            height: 120,
+            backgroundColor: "#16161A"
+          },
         }}
       />
 
@@ -67,21 +71,21 @@ export default function TabLayout() {
         name="chat"
         options={{
           title: "Chat",
-          headerTitle:"",
-          headerStyle:{
+          headerTitle: "",
+          headerStyle: {
             backgroundColor: Colors[colorScheme ?? "light"].headerColor,
-            height:130
+            height: 130
           },
-          tabBarStyle:{
+          tabBarStyle: {
             // marginTop:10,
             // paddingTop:10
           },
-          
+
           tabBarIcon: ({ color }) => (
             <Ionicons name="chatbubble-outline" size={20} color={color} />
           ),
           headerLeft: () => (
-            <Image className="ml-6" source={require("@/assets/images/avatar.png")}/>
+            <Image className="ml-6" source={require("@/assets/images/avatar.png")} />
           )
         }}
       />
