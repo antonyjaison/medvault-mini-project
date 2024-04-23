@@ -6,6 +6,9 @@ import Colors from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import NameInput from "./_components/name-input";
 import CityInput from "./_components/city-input";
+import GenderInput from "./_components/gender-input";
+import AgeInput from "./_components/age-input";
+import HeightInput from "./_components/height-input";
 
 const UserDetails = () => {
   const colorScheme = useColorScheme();
@@ -14,15 +17,18 @@ const UserDetails = () => {
   return (
     <View
       style={{ height: height - 20 }}
-      className="w-full items-center"
+      className="w-full items-center bg-[#16161A]"
     >
       <View className="mt-20">
         <AuthProgress />
       </View>
 
       <View className=" w-full h-10 mt-10">
-        <NameInput/>
-        <CityInput/>
+        {/* <NameInput/> */}
+        {/* <CityInput/> */}
+        {/* <GenderInput/> */}
+        {/* <AgeInput/> */}
+        <HeightInput/>
       </View>
 
 
