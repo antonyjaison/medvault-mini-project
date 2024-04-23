@@ -1,19 +1,55 @@
-import { View, Text, Dimensions, TouchableOpacity, Button } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Dimensions, TouchableOpacity, Button, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router'
 import { Divider } from '@/components/divider'
 import { Entypo, Ionicons, Feather } from '@expo/vector-icons'
 import Model from '@/components/Model'
 import { ParamsType } from '.'
+import * as DocumentPicker from "expo-document-picker";
+import ImagePreview from '@/components/image-preview'
+import { FileType } from '@/lib/types/file-type'
 
 const Files = () => {
   const { folderID, folderName, fileType }: ParamsType = useLocalSearchParams()
   const { height } = Dimensions.get("screen")
   const [showModel, setShowModel] = useState(false)
-  return (
-    <View style={{ minHeight: height }} className=' w-full bg-[#16161A] px-4 flex-col py-4'>
-      <View>
+  const [file, setFile] = useState<FileType>({
+    uri: "",
+    name: "",
+    type: ""
+  })
 
+  const pickImage = async () => {
+    let res = null;
+
+    try {
+      res = await DocumentPicker.getDocumentAsync({
+        type: ["image/*"],
+        copyToCacheDirectory: true,
+        multiple: false,
+      });
+      if (res.canceled) {
+        return;
+      }
+
+      setFile({
+        uri: res.assets[0].uri,
+        name: res.assets[0].name,
+        type: res.assets[0].mimeType ?? ""
+      })
+
+    } catch (err) {
+      console.log("error -----", err);
+    }
+  };
+
+  useEffect(() => {
+    setShowModel(false)
+  }, [file.uri])
+
+  return (
+    <View style={{ minHeight: height }} className=' w-full bg-[#16161A] flex-col py-4'>
+      <View className='px-4'>
         <View className=' flex-row h-fit items-center mb-5'>
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name='chevron-back' size={25} color="#fff" />
@@ -46,7 +82,7 @@ const Files = () => {
                 <TouchableOpacity className=' w-20 h-20 rounded-xl bg-[#2F2F40] items-center justify-center'>
                   <Ionicons name='pencil-outline' color="#fff" size={30} />
                 </TouchableOpacity>
-                <TouchableOpacity className=' w-20 h-20 rounded-xl bg-[#2F2F40] items-center justify-center'>
+                <TouchableOpacity onPress={pickImage} className=' w-20 h-20 rounded-xl bg-[#2F2F40] items-center justify-center'>
                   <Ionicons name='image-outline' color="#fff" size={30} />
                 </TouchableOpacity>
               </View>
@@ -55,8 +91,11 @@ const Files = () => {
 
         </Model>}
 
-
       </View>
+
+      {file.uri && <ImagePreview image={file.uri} setFile={setFile} onPressUpload={() => { }} />}
+
+
     </View>
   )
 }
