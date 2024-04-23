@@ -35,7 +35,7 @@ const Documents = () => {
                   folderID: "health-insurance",
                   folderName: "Health Insurance",
                   fileType: "any"
-                } as ParamsType
+                } 
               })
             }} title='Health Insurance' subtitle='demo' />
             <DocumentFolder onPress={() => {
@@ -45,7 +45,7 @@ const Documents = () => {
                   folderID: "hospital-report",
                   folderName: "Hospital Report",
                   fileType: "any"
-                } as ParamsType
+                }
               })
             }} title='Hospital Report' />
             <DocumentFolder
@@ -56,7 +56,7 @@ const Documents = () => {
                     folderID: "life-insurance",
                     folderName: "Life Insurance",
                     fileType: "any"
-                  } as ParamsType
+                  }
                 })
               }}
               title='Life Insurance'
@@ -69,7 +69,7 @@ const Documents = () => {
                     folderID: "prescriptions",
                     folderName: "Prescriptions",
                     fileType: "image"
-                  } as ParamsType
+                  }
                 })
               }}
               title='Prescriptions'

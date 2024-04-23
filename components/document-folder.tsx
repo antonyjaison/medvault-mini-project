@@ -21,17 +21,18 @@ type DocumentFolderProps = {
     onPress: () => void,
 }
 
+export const Block = ({ icon, onSelect }: BlockProps) => {
+    return (
+        <MenuOption onSelect={onSelect}>
+            <TouchableOpacity style={styles.menuItem}>
+                {icon}
+            </TouchableOpacity>
+        </MenuOption>
+    )
+}
+
 const DocumentFolder = ({ onPress, subtitle, title }: DocumentFolderProps) => {
 
-    const Block = ({ icon, onSelect }: BlockProps) => {
-        return (
-            <MenuOption onSelect={onSelect}>
-                <TouchableOpacity style={styles.menuItem}>
-                    {icon}
-                </TouchableOpacity>
-            </MenuOption>
-        )
-    }
 
     return (
         <TouchableOpacity onPress={onPress} className=' relative'>
@@ -63,11 +64,8 @@ const DocumentFolder = ({ onPress, subtitle, title }: DocumentFolderProps) => {
                         <Ionicons name='ellipsis-vertical' color="#fff" size={24} />
                     </MenuTrigger>
                     <MenuOptions customStyles={{ optionWrapper: {}, optionsContainer: { backgroundColor: "#2A2D3A", borderRadius: 10, width: 100 } }}>
-                        <Block icon={<FontAwesome name='thumb-tack' color="#fff" size={18} />} onSelect={() => { }} />
-                        <Divider backgroundColor='#7F8487' height={1} />
+
                         <Block icon={<Ionicons name='pencil' color="#fff" size={18} />} onSelect={() => { }} />
-                        <Divider backgroundColor='#7F8487' height={1} />
-                        <Block icon={<Ionicons name='share-social' color="#fff" size={18} />} onSelect={() => { }} />
                         <Divider backgroundColor='#7F8487' height={1} />
                         <Block icon={<FontAwesome name='trash-o' color="#BA1A1A" size={18} />} onSelect={() => { }} />
                     </MenuOptions>
