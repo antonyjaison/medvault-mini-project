@@ -1,17 +1,31 @@
-import { View, Text,TextInput } from 'react-native'
+import { View, Text, TextInput, TouchableNativeFeedback, TouchableOpacity } from 'react-native'
 import React from 'react'
+import { FontAwesome } from '@expo/vector-icons'
+import GoogleFitLogo from '@/assets/svg/google-fit'
 
 const GooglefiInput = () => {
   return (
-    <View>
-         <View className=' items-center gap-2 px-6'>
-            <Text className='text-white font-semibold text-3xl'>Do you want to connect with Google Fit?</Text>
-            <Text className='text-[#707070] text-lg w-72'>This will help us to monitor your physical activity and metrics</Text>
-            <View className='pt-5 w-full'>
-                <TextInput className=' border border-[#707070] w-full h-14 rounded-lg pl-3 text-white' />
-            </View>
-        </View>
-      
+    <View style={{ alignItems: 'center', paddingHorizontal: 6, paddingTop: 20 }}>
+      <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24, textAlign: 'center' }}>Do you want to connect with Google Fit?</Text>
+      <Text style={{ color: '#707070', fontSize: 16, textAlign: 'center', marginTop: 10 }}>This will help us to monitor your physical activity and metrics.</Text>
+
+
+      <View className=' w-full px-4 pt-28 items-center'>
+
+        <GoogleFitLogo />
+
+        <TouchableNativeFeedback>
+          <View className='mt-12 w-full bg-[#1A4CD3] rounded-lg py-3'>
+            <Text className=' text-white text-lg text-center'>Connect with Fit</Text>
+          </View>
+        </TouchableNativeFeedback>
+        <TouchableOpacity>
+          <Text className='text-white text-lg mt-6'>Skip</Text>
+        </TouchableOpacity>
+
+      </View>
+
+
     </View>
   )
 }

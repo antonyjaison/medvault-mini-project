@@ -21,7 +21,7 @@ const ImagePreview = ({ image, onPressUpload, setFile }: ImagePreviewProps) => {
     }
 
     return (
-        <View style={{ height: height - 190 }} className=' w-full bg-[#000000aa] absolute top-0 items-center justify-center px-4'>
+        <View style={{ height: height - 190 }} className=' z-20 w-full bg-[#000000aa] absolute top-0 items-center justify-center px-4'>
             <TouchableOpacity onPress={clearSelectedFile} className='self-end mr-6 mb-6'>
                 <EvilIcons name="close" size={35} color="#fff" />
             </TouchableOpacity>

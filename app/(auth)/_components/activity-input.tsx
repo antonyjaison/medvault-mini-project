@@ -1,21 +1,29 @@
-import { Text, View,TextInput } from 'react-native'
-import React, { Component } from 'react'
+import { Text, View, TextInput, TouchableNativeFeedback } from 'react-native'
+import React from 'react'
 
-export class ActivityInput
- extends Component {
-  render() {
-    return (
-      <View>
-        <View className=' gap-2 px-6'>
-      <Text className='text-white font-semibold text-3xl text align-middle'>How active are You?</Text>
-      <Text className='text-[#707070] text-lg w-72 '>We'll keep your data safe</Text>
-      <View className='pt-5 w-full'>
-        <TextInput className=' border border-[#707070] w-full h-14 rounded-lg pl-3 text-white'placeholder='Search for your city' />
+export const ActivityInput = () => {
+
+  const activities = ["Little or No Activity", "Lightly Active", "Moderately Active", "Very Active"]
+
+  return (
+    <View style={{ alignItems: 'center', paddingHorizontal: 6, paddingTop: 20 }}>
+      <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24, textAlign: 'center' }}>How active are you?</Text>
+      <Text style={{ color: '#707070', fontSize: 16, textAlign: 'center', marginTop: 10 }}>Based on your lifestyle, we can assess your daily calorie requirements.</Text>
+
+
+      <View style={{ gap: 14 }} className=' w-full px-4 pt-8'>
+        {activities.map((activity, index) => (
+          <TouchableNativeFeedback onPress={() => console.log(activity)} key={index}>
+            <View style={{ elevation: 10 }} className=' w-full bg-[#1C1E27] py-6 rounded-lg'>
+              <Text className=' text-[#707070] text-lg text-center '>{activity}</Text>
+            </View>
+          </TouchableNativeFeedback>
+        ))}
       </View>
+
+
     </View>
-      </View>
-    )
-  }
+  )
 }
 
 export default ActivityInput

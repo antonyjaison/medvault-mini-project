@@ -28,23 +28,23 @@ const HeightInput = () => {
 
   const handleToggle = () => {
     setSelectedOption(selectedOption === 'ft' ? 'cm' : 'ft');
-  };
+  }; 
 
   return (
 
     <View style={{ alignItems: 'center', paddingHorizontal: 6, paddingTop: 20 }}>
       <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24, textAlign: 'center' }}>How tall are you?</Text>
       <Text style={{ color: '#707070', fontSize: 16, textAlign: 'center', marginTop: 10 }}>Your height will help us to calculate important body stats to help you reach your goals faster(in {selectedOption}).</Text>
-
+ 
       <View className=' mt-10'>
         <ScrollableInput data={
           selectedOption === 'ft' ? heightInInch : heightsInCm
         } selectedIndex={selectedHeight} setSelectedIndex={setSelectedHeight} />
       </View>
 
-      <View style={{ elevation: 10 }} className=' bg-[#1C1E27] w-24 h-8 rounded-full flex-row mt-10'>
+      <View style={{ elevation: 5 }} className=' bg-[#1C1E27] w-24 h-8 rounded-full flex-row mt-10'>
         <TouchableNativeFeedback onPress={handleToggle}>
-          <View style={{ elevation: 10 }} className={cn(
+          <View style={{ elevation:  selectedOption === 'ft' ? 5 : 0 }} className={cn(
             'bg-[#1A4CD3] h-full rounded-full items-center justify-center flex-1',
             selectedOption === 'ft' ? 'bg-[#1A4CD3]' : 'bg-[#1C1E27]'
           )}>
@@ -55,7 +55,7 @@ const HeightInput = () => {
           </View>
         </TouchableNativeFeedback>
         <TouchableNativeFeedback onPress={handleToggle}>
-          <View className={cn(
+          <View style={{ elevation:  selectedOption === 'cm' ? 5 : 0 }} className={cn(
             "items-center justify-center flex-1 rounded-full",
             selectedOption === 'cm' ? 'bg-[#1A4CD3]' : 'bg-[#1C1E27]'
           )}>
