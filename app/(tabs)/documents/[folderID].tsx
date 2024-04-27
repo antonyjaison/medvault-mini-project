@@ -10,6 +10,14 @@ import ImagePreview from '@/components/image-preview'
 import { FileType } from '@/lib/types/file-type'
 import DocumentCard from '@/components/DocumentCard'
 import Input from '@/components/input'
+import { BASE_URL } from '@env'
+
+type PrescriptionDataType = {
+  name: string,
+  dose: string,
+  frequency: number,
+  remarks: string
+}
 
 const Files = () => {
   const { folderID, folderName, fileType }: ParamsType = useLocalSearchParams()
@@ -27,6 +35,10 @@ const Files = () => {
     type: ""
   })
 
+  const [prescriptionData, setPrescriptionData] = useState<PrescriptionDataType[]>([])
+
+
+  console.log(BASE_URL)
 
   const selectDocument = async () => {
     let res = null;
@@ -91,6 +103,26 @@ const Files = () => {
     setShowModel(false)
   }, [file.uri, document.uri])
 
+  const uploadPrescriptionToClaude = async () => {
+    console.log(`${BASE_URL}/prescription/get-prescription`)
+    const res = await fetch(`https://2994-103-82-186-128.ngrok-free.app/prescription/get-prescription`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        image: "https://firebasestorage.googleapis.com/v0/b/timanage-82f5d.appspot.com/o/prescription.jpeg?alt=media&token=a40e3b9e-46c1-4558-8c91-6006a9228b75",
+        type: ""
+      })
+    })
+
+    const json = await res.json();
+
+    setPrescriptionData(JSON.parse(json[0].text))
+  }
+
+  console.log(prescriptionData)
+
   return (
     <View style={{ minHeight: height }} className=' w-full bg-[#16161A] flex-col py-4 relative'>
 
@@ -125,6 +157,36 @@ const Files = () => {
       </ScrollView>
 
 
+      <Model isVisible={prescriptionData.length > 0} title='Prescription Data' onClose={() => setPrescriptionData([])}>
+        <View className='p-4 pb-6'>
+
+
+
+          <ScrollView className='h-[300px]' alwaysBounceVertical showsVerticalScrollIndicator={false} fadingEdgeLength={100}>
+
+            <View className=' gap-2 py-3'>
+              {prescriptionData.length > 0 ? (
+                prescriptionData.map((prescription, index) => (
+                  <View key={index} className=' bg-[#2F2F40] p-2 rounded-lg'>
+                    <Text className=' text-[#999797]'><Text className=' font-semibold'>Name</Text>: {prescription.name}</Text>
+                    <Text className=' text-[#999797]'><Text className=' font-semibold'>Dose</Text>: {prescription.dose} | <Text className=' font-semibold'>Frequency</Text>: {prescription.frequency}</Text>
+                    <Text className=' text-[#999797]'><Text className=' font-semibold'>Remarks</Text>: {prescription.remarks}</Text>
+                  </View>
+                ))
+              ) : (
+                <Text>No prescription data available</Text>
+              )}
+            </View>
+          </ScrollView>
+
+
+          <View className=' bg-slate-100 rounded-xl overflow-hidden'>
+            <Button color="#1A4CD3" title='Save prescription' />
+          </View>
+        </View>
+      </Model>
+
+
       {showModel && <Model isVisible={showModel} onClose={() => setShowModel(false)} title={`Upload ${folderName}`}>
         {fileType === "any" ? (
           <View className='justify-center items-center h-36'>
@@ -148,7 +210,7 @@ const Files = () => {
 
       </Model>}
 
-      {file.uri && <ImagePreview image={file.uri} setFile={setFile} onPressUpload={() => { }} />}
+      {file.uri && <ImagePreview image={file.uri} setFile={setFile} onPressUpload={uploadPrescriptionToClaude} />}
 
       {document.uri && <Model title='Document' isVisible={document.uri !== null} onClose={clearDocument}>
         <View style={{ gap: 16 }} className=' p-4 pb-6'>

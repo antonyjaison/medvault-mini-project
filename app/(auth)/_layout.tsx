@@ -6,10 +6,12 @@ const AuthLayout = () => {
   return (
     <Stack initialRouteName="details">
       <Stack.Screen name="details" options={{
+        headerShown: false
+      }} />
+      <Stack.Screen name="login" options={{ headerShown: false }} />
+      <Stack.Screen name="register" options={{
         headerShown:false
       }} />
-      <Stack.Screen name="login" />
-      <Stack.Screen name="register" />
     </Stack>
   );
 };

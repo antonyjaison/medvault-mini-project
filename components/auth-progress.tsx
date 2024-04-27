@@ -2,50 +2,17 @@ import { View, Text } from "react-native";
 import React from "react";
 import { useColorScheme } from "@/components/useColorScheme";
 
-const AuthProgress = () => {
+const AuthProgress = ({ id }: { id: number }) => {
   const colorScheme = useColorScheme();
 
-  const arr = [
-    {
-      number: 1,
-      active: true,
-    },
-    {
-      number: 2,
-      active: false,
-    },
-    {
-      number: 3,
-      active: false,
-    },
-    {
-      number: 4,
-      active: false,
-    },
-    {
-      number: 5,
-      active: false,
-    },
-    {
-      number: 6,
-      active: false,
-    },
-    {
-      number: 7,
-      active: false,
-    },
-    {
-      number: 8,
-      active: false,
-    },
-  ] as const;
+  const arr = [1, 2, 3, 4, 5, 6, 7, 8]
 
   return (
     <View className=" flex-row gap-1">
-      {arr.map((data) => (
+      {arr.map((number) => (
         <View
-          key={data.number}
-          style={{ backgroundColor: data.active ? "white" : "#707070" }}
+          key={number}
+          style={{ backgroundColor: number <= id ? "white" : "#707070" }}
           className="w-4 h-[2px] rounded-sm"
         />
       ))}
