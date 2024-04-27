@@ -21,7 +21,7 @@ const Input = ({ labelBackgroundColor, label, onChangeText, value, placeholder, 
 
     return (
         <View className=' relative'>
-            <TextInput secureTextEntry={hidePassword} value={value} onChangeText={onChangeText} placeholder={placeholder} {...rest} placeholderTextColor="#fff" className=' bg-transparent border-0.5 border-[#707070] rounded-xl px-6 py-2 w-full text-[#bfbfbf] text-sm' />
+            <TextInput secureTextEntry={label === "Password" && hidePassword} value={value} onChangeText={onChangeText} placeholder={placeholder} {...rest} placeholderTextColor="#bfbfbf" className=' bg-transparent border-0.5 border-[#707070] rounded-xl px-6 py-2 w-full text-[#bfbfbf] text-sm' />
             <Text style={{ backgroundColor: labelBackgroundColor || "#1C1E27" }} className=' text-[#707070] text-xs absolute top-[-8px] left-4 bg-[#1C1E27] px-2'>{label}</Text>
             {label === "Password" && (
                 <TouchableOpacity onPress={toggleHidePassword} className=' absolute right-4 top-2'>

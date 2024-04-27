@@ -5,6 +5,7 @@ import DocumentsSection from "@/components/DocumentsSection";
 import InsightSection from "@/components/InsightSection";
 import Footer from "@/components/footer";
 import MedicationIntakeStatus from "@/components/medication-intake-status";
+import auth from '@react-native-firebase/auth';
 
 export default function TabOneScreen() {
   const timerGradient = [

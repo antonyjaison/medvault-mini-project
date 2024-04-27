@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "754733255373",
+    "project_id": "medvault-1ca13",
+    "storage_bucket": "medvault-1ca13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754733255373:android:f347bce6d479e30fc2b784",
+        "android_client_info": {
+          "package_name": "com.antony639.medvault"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQ1jFqtRaQjVR70opkgFPmsul0wyVnG3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
