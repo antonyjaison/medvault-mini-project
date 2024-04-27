@@ -1,5 +1,5 @@
 import { View, Text, Dimensions, TouchableNativeFeedback, TextInput, TouchableOpacity, Alert } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Input from '@/components/input'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Divider } from '@/components/divider'
@@ -8,9 +8,10 @@ import Facebook from '@/assets/svg/facebook'
 import Apple from '@/assets/svg/apple'
 import { Link, router } from 'expo-router'
 import { Picker } from '@react-native-picker/picker';
-import auth from '@react-native-firebase/auth'
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import { Ionicons } from '@expo/vector-icons'
 import Model from '@/components/Model'
+import { useUser } from '@/store/userStore'
 
 type UserType = {
   name: string,
@@ -26,6 +27,7 @@ const Register = () => {
   const [genderModel, setGenderModel] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const { setUser } = useUser()
 
   const [userDetails, setUserDetails] = useState<UserType>({
     name: '',
@@ -66,6 +68,12 @@ const Register = () => {
     setLoading(false)
     setError(registrationError);
   }
+
+  useEffect(() => {
+    auth().onAuthStateChanged(userState => {
+      setUser(userState as FirebaseAuthTypes.UserInfo)
+    })
+  },[])
 
 
   return (

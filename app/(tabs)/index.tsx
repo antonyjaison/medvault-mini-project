@@ -8,6 +8,7 @@ import MedicationIntakeStatus from "@/components/medication-intake-status";
 import auth from '@react-native-firebase/auth';
 
 export default function TabOneScreen() {
+
   const timerGradient = [
     { color: "#6d9cf4", percentage: 50 },
     { color: "#1A4CD3", percentage: 100 },
