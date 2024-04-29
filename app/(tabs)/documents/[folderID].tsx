@@ -31,6 +31,7 @@ const Files = () => {
   const { height } = Dimensions.get("screen")
   const [showModel, setShowModel] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
+  const [prescriptionProgress, setPrescriptionProgress] = useState(0)
   const [filesData, setfilesData] = useState([])
   const [file, setFile] = useState<FileType>({
     uri: "",
@@ -120,21 +121,43 @@ const Files = () => {
   }, [file.uri, document.uri])
 
   const uploadPrescriptionToClaude = async () => {
-    console.log(`${BASE_URL}/prescription/get-prescription`)
-    const res = await fetch(`https://2994-103-82-186-128.ngrok-free.app/prescription/get-prescription`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        image: "https://firebasestorage.googleapis.com/v0/b/timanage-82f5d.appspot.com/o/prescription.jpeg?alt=media&token=a40e3b9e-46c1-4558-8c91-6006a9228b75",
-        type: ""
-      })
-    })
 
-    const json = await res.json();
+    const reference = storage().ref(`prescription/`);
+    const task = reference.putFile(file.uri);
 
-    setPrescriptionData(JSON.parse(json[0].text))
+    // progress callback
+    task.on('state_changed', snapshot => {
+      setPrescriptionProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+    });
+
+    try {
+      await task; // Wait for the upload to complete
+      console.log('Document uploaded to the bucket!');
+
+      // Fetch the download URL
+      const downloadURL = await reference.getDownloadURL();
+
+      if (downloadURL) {
+        const res = await fetch(`${BASE_URL}/prescription/get-prescription`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            image: downloadURL,
+            type: ""
+          })
+        })
+
+        const json = await res.json();
+
+        setPrescriptionData(JSON.parse(json[0].text))
+      }
+
+    } catch (error) {
+      console.error('Error uploading document:', error);
+    }
+
   }
 
   const uploadDocument = async () => {
@@ -357,7 +380,7 @@ const Files = () => {
 
       </Model>}
 
-      {file.uri && <ImagePreview image={file.uri} setFile={setFile} onPressUpload={uploadPrescriptionToClaude} />}
+      {file.uri && <ImagePreview loading={prescriptionProgress} setLoading={setPrescriptionProgress} image={file.uri} setFile={setFile} onPressUpload={uploadPrescriptionToClaude} />}
 
       {document.uri && <Model title='Document' isVisible={document.uri !== null} onClose={clearDocument}>
         <View style={{ gap: 16 }} className=' p-4 pb-6'>
@@ -372,7 +395,6 @@ const Files = () => {
             <View className=' bg-[#1A4CD3] rounded-xl overflow-hidden'>
               <Button disabled={uploadProgress > 0} onPress={uploadDocument} color="#1A4CD3" title="Upload document" />
             </View>
-
           )}
         </View>
       </Model>}

@@ -7,12 +7,15 @@ type ImagePreviewProps = {
     image: string;
     setFile: React.Dispatch<React.SetStateAction<FileType>>;
     onPressUpload: () => void;
+    loading: number;
+    setLoading: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ImagePreview = ({ image, onPressUpload, setFile }: ImagePreviewProps) => {
+const ImagePreview = ({ image, onPressUpload, setFile, loading, setLoading }: ImagePreviewProps) => {
     const { height } = Dimensions.get("screen")
 
     const clearSelectedFile = () => {
+        setLoading(0)
         setFile({
             uri: "",
             name: "",
@@ -51,9 +54,18 @@ const ImagePreview = ({ image, onPressUpload, setFile }: ImagePreviewProps) => {
                     onError={() => console.log('Error loading image')}
                 />
             </View>
-            <View className='rounded-lg overflow-hidden w-10/12 mt-4'>
-                <Button onPress={onPressUpload} color="#1A4CD3" title='UPLOAD PRESCRIPTION' />
-            </View>
+
+            {(loading > 0) ? (
+                <View style={{ elevation: 10 }} className=' bg-[#86a6ff] rounded-md h-5 overflow-hidden'>
+                    <View style={{ width: `${loading}%` }} className=' h-full w-6 bg-[#1A4CD3]'>
+                    </View>
+                </View>
+            ) : (
+                <View className=' bg-[#1A4CD3] rounded-xl overflow-hidden'>
+                    <Button disabled={loading > 0} onPress={onPressUpload} color="#1A4CD3" title="Upload Prescription" />
+                </View>
+            )}
+
         </View>
     )
 }
