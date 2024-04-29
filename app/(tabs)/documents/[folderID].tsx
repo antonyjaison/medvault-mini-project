@@ -11,6 +11,12 @@ import { FileType } from '@/lib/types/file-type'
 import DocumentCard from '@/components/DocumentCard'
 import Input from '@/components/input'
 import { BASE_URL } from '@env'
+import storage from '@react-native-firebase/storage';
+import { folderExists, replaceSpacesWithUnderscores, addFolderToDocument } from '@/lib/functons'
+import { useUser } from '@/store/userStore'
+import firestore from '@react-native-firebase/firestore';
+import { updateFolderWithFile } from '@/lib/functons'
+import { useDocuments } from '@/store/useDocuments'
 
 type PrescriptionDataType = {
   name: string,
@@ -20,9 +26,12 @@ type PrescriptionDataType = {
 }
 
 const Files = () => {
-  const { folderID, folderName, fileType }: ParamsType = useLocalSearchParams()
+  const { folderID, folderName, fileType, data }: ParamsType = useLocalSearchParams()
+  const { documents } = useDocuments()
   const { height } = Dimensions.get("screen")
   const [showModel, setShowModel] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [filesData, setfilesData] = useState([])
   const [file, setFile] = useState<FileType>({
     uri: "",
     name: "",
@@ -37,8 +46,8 @@ const Files = () => {
 
   const [prescriptionData, setPrescriptionData] = useState<PrescriptionDataType[]>([])
 
+  const { user } = useUser()
 
-  console.log(BASE_URL)
 
   const selectDocument = async () => {
     let res = null;
@@ -64,7 +73,14 @@ const Files = () => {
     }
   }
 
-  console.log(document)
+  useEffect(() => {
+    if (fileType === "image") {
+      setfilesData([])
+    } else {
+      setfilesData(JSON.parse(data))
+    }
+
+  }, [data])
 
 
   const pickImage = async () => {
@@ -121,7 +137,132 @@ const Files = () => {
     setPrescriptionData(JSON.parse(json[0].text))
   }
 
-  console.log(prescriptionData)
+  const uploadDocument = async () => {
+    // with bytes transferred
+    const reference = storage().ref(`documents/${user?.uid}/${replaceSpacesWithUnderscores(folderName)}/${document.name}`);
+    const task = reference.putFile(document.uri);
+
+    // progress callback
+    task.on('state_changed', snapshot => {
+      setUploadProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+    });
+
+    try {
+      await task; // Wait for the upload to complete
+      console.log('Document uploaded to the bucket!');
+
+      // Fetch the download URL
+      const downloadURL = await reference.getDownloadURL();
+
+      if (downloadURL) {
+        folderExists(user?.uid, folderName).then(exists => {
+          if (exists) {
+            console.log("Folder exists");
+            // Logic to add the file to the existing folder
+            const newFile = {
+              uri: downloadURL,
+              name: document.name,
+              type: document.type
+            };
+
+            updateFolderWithFile(user?.uid, folderName, newFile).then(() => {
+              console.log("File added to the folder");
+              setUploadProgress(0); // Reset upload progress
+            })
+
+          } else {
+
+            console.log("not exists")
+
+            // check for any folder exists for that user
+            const folderExistsForUser = firestore().collection("documents").where("uid", "==", user?.uid).get()
+              .then(snapshot => {
+                if (snapshot.empty) {
+                  //   // Logic to create a new folder and add the file
+                  const documentInfo = {
+                    uid: user?.uid, // User's UID from Firebase Authentication
+                    folders: [{
+                      name: folderName,
+                      files: [{
+                        uri: downloadURL, // URL from the uploaded file
+                        name: document.name, // Name of the file
+                        type: document.type, // Type of the file, e.g., 'image/jpeg'
+                      }]
+                    }]
+                  };
+
+                  firestore().collection("documents").add(documentInfo)
+                    .then((docRef) => {
+                      console.log("Document added with ID:", docRef.id);
+                      setUploadProgress(0); // Reset upload progress
+                    })
+                    .catch((error) => {
+                      console.error("Error adding document:", error);
+                    });
+                } else {
+                  addFolderToDocument(user?.uid, folderName, {
+                    uri: downloadURL,
+                    name: document.name,
+                    type: document.type
+                  }).then(() => {
+                    console.log("Folder added to the document");
+                    setUploadProgress(0); // Reset upload progress
+                  })
+                }
+              })
+              .catch(error => {
+                console.error("Error fetching documents: ", error);
+                return false;
+              });
+
+
+            // if (folderExistsForUser) {
+
+            // } else {
+
+            // }
+
+
+            // const documentInfo = {
+            //   uid: user?.uid, // User's UID from Firebase Authentication
+            //   folders: [{
+            //     name: folderName,
+            //     files: [{
+            //       uri: downloadURL, // URL from the uploaded file
+            //       name: document.name, // Name of the file
+            //       type: document.type, // Type of the file, e.g., 'image/jpeg'
+            //     }]
+            //   }]
+            // };
+
+            // firestore().collection("documents").add(documentInfo)
+            //   .then((docRef) => {
+            //     console.log("Document added with ID:", docRef.id);
+            //     setUploadProgress(0); // Reset upload progress
+            //   })
+            //   .catch((error) => {
+            //     console.error("Error adding document:", error);
+            //   });
+          }
+        });
+      }
+
+
+
+      // Reset document state or perform other operations
+      setDocument({
+        uri: "",
+        name: "",
+        type: ""
+      });
+
+      // You might want to use the download URL in your application logic
+      // For example, save it to your database or state
+    } catch (error) {
+      console.error('Error uploading document:', error);
+    }
+  };
+
 
   return (
     <View style={{ minHeight: height }} className=' w-full bg-[#16161A] flex-col py-4 relative'>
@@ -139,7 +280,18 @@ const Files = () => {
       </View>
 
 
-      {/* <View style={{ minHeight: height - 250, gap: 6 }} className=' w-full items-center justify-center'>
+
+
+      {filesData.length > 0 ? (
+        <ScrollView>
+          <View style={{ gap: 16 }} className=' p-4 pb-[340px]'>
+            {filesData && filesData?.map(file => (
+              <DocumentCard key={file.uri} title={file.name} type={file.type} />
+            ))}
+          </View>
+        </ScrollView>
+      ) : (
+        <View style={{ minHeight: height - 250, gap: 6 }} className=' w-full items-center justify-center'>
           <Feather name="folder" color="#707070" size={70} />
           <Text className=' font-semibold text-[#707070] text-2xl'>Oops!</Text>
           <Text className=' font-semibold text-[#707070] text-xl'>No files in this folder</Text>
@@ -148,13 +300,8 @@ const Files = () => {
               <Entypo name='plus' color="#fff" size={30} />
             </View>
           </TouchableOpacity>
-        </View> */}
-
-      <ScrollView>
-        <View style={{ gap: 16 }} className=' p-4 pb-[340px]'>
-          <DocumentCard title='demo' />
         </View>
-      </ScrollView>
+      )}
 
 
       <Model isVisible={prescriptionData.length > 0} title='Prescription Data' onClose={() => setPrescriptionData([])}>
@@ -215,18 +362,28 @@ const Files = () => {
       {document.uri && <Model title='Document' isVisible={document.uri !== null} onClose={clearDocument}>
         <View style={{ gap: 16 }} className=' p-4 pb-6'>
           <DocumentCard title={document.name} type={document.type} />
-          <Input />
-          <View className=' bg-slate-100 rounded-xl overflow-hidden'>
-            <Button color="#1A4CD3" title='Upload document' />
-          </View>
+          <Input label='Document name' placeholder={document.name} />
+          {(uploadProgress > 0) ? (
+            <View style={{ elevation: 10 }} className=' bg-[#86a6ff] rounded-md h-5 overflow-hidden'>
+              <View style={{ width: `${uploadProgress}%` }} className=' h-full w-6 bg-[#1A4CD3]'>
+              </View>
+            </View>
+          ) : (
+            <View className=' bg-[#1A4CD3] rounded-xl overflow-hidden'>
+              <Button disabled={uploadProgress > 0} onPress={uploadDocument} color="#1A4CD3" title="Upload document" />
+            </View>
+
+          )}
         </View>
       </Model>}
 
-      <TouchableOpacity onPress={() => setShowModel(true)} style={{ zIndex: 10 }} className='absolute right-6 bottom-[270px]'>
-        <View className='rounded-lg bg-[#1A4CD3] p-3'>
-          <Entypo name='plus' color="#fff" size={30} />
-        </View>
-      </TouchableOpacity>
+      {filesData.length > 0 && (
+        <TouchableOpacity onPress={() => setShowModel(true)} style={{ zIndex: 10 }} className='absolute right-6 bottom-[270px]'>
+          <View className='rounded-lg bg-[#1A4CD3] p-3'>
+            <Entypo name='plus' color="#fff" size={30} />
+          </View>
+        </TouchableOpacity>
+      )}
 
     </View>
   )
