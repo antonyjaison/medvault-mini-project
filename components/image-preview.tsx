@@ -56,12 +56,14 @@ const ImagePreview = ({ image, onPressUpload, setFile, loading, setLoading }: Im
             </View>
 
             {(loading > 0) ? (
-                <View style={{ elevation: 10 }} className=' bg-[#86a6ff] rounded-md h-5 overflow-hidden'>
-                    <View style={{ width: `${loading}%` }} className=' h-full w-6 bg-[#1A4CD3]'>
+                <View className=' bg-[#86a6ff] rounded-xl overflow-hidden w-full'>
+                    <View className=' h-5 overflow-hidden'>
+                        <View style={{ width: `${loading}%` }} className=' h-full w-6 bg-[#1A4CD3]'>
+                        </View>
                     </View>
                 </View>
             ) : (
-                <View className=' bg-[#1A4CD3] rounded-xl overflow-hidden'>
+                <View className=' bg-[#1A4CD3] rounded-xl overflow-hidden w-full'>
                     <Button disabled={loading > 0} onPress={onPressUpload} color="#1A4CD3" title="Upload Prescription" />
                 </View>
             )}

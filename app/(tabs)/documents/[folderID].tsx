@@ -17,6 +17,7 @@ import { useUser } from '@/store/userStore'
 import firestore from '@react-native-firebase/firestore';
 import { updateFolderWithFile } from '@/lib/functons'
 import { useDocuments } from '@/store/useDocuments'
+import PrescriptionCard from '@/components/PrescriptionCard'
 
 type PrescriptionDataType = {
   name: string,
@@ -27,12 +28,13 @@ type PrescriptionDataType = {
 
 const Files = () => {
   const { folderID, folderName, fileType, data }: ParamsType = useLocalSearchParams()
-  const { documents } = useDocuments()
+  const { documents, prescriptions } = useDocuments()
   const { height } = Dimensions.get("screen")
   const [showModel, setShowModel] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [prescriptionProgress, setPrescriptionProgress] = useState(0)
   const [filesData, setfilesData] = useState([])
+  const [prescriptionDownloadUrl, setPrescriptionDownloadUrl] = useState("")
   const [file, setFile] = useState<FileType>({
     uri: "",
     name: "",
@@ -48,7 +50,6 @@ const Files = () => {
   const [prescriptionData, setPrescriptionData] = useState<PrescriptionDataType[]>([])
 
   const { user } = useUser()
-
 
   const selectDocument = async () => {
     let res = null;
@@ -76,7 +77,7 @@ const Files = () => {
 
   useEffect(() => {
     if (fileType === "image") {
-      setfilesData([])
+      setfilesData(prescriptions)
     } else {
       setfilesData(JSON.parse(data))
     }
@@ -121,44 +122,71 @@ const Files = () => {
   }, [file.uri, document.uri])
 
   const uploadPrescriptionToClaude = async () => {
+    if (!file) {
+      console.error('No file provided for upload');
+      return;
+    }
 
-    const reference = storage().ref(`prescription/`);
+    // Create a unique file name, e.g., using a timestamp or a unique ID
+    const uniqueFileName = `${Date.now()}_${file.name}`;
+    const reference = storage().ref(`prescription/${uniqueFileName}`);
+
     const task = reference.putFile(file.uri);
 
-    // progress callback
     task.on('state_changed', snapshot => {
-      setPrescriptionProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      setPrescriptionProgress(progress);
     });
 
     try {
       await task; // Wait for the upload to complete
-      console.log('Document uploaded to the bucket!');
+      console.log('Image uploaded to the prescription folder!');
 
-      // Fetch the download URL
       const downloadURL = await reference.getDownloadURL();
-
       if (downloadURL) {
-        const res = await fetch(`${BASE_URL}/prescription/get-prescription`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            image: downloadURL,
-            type: ""
-          })
+
+        setPrescriptionDownloadUrl(downloadURL)
+
+
+        firestore().collection("prescription").add({
+          uid: user?.uid,
+          image: downloadURL,
+          prescriptionData: []
+        }).then(async () => {
+          const response = await fetch(`${BASE_URL}/prescription/get-prescription`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              image: downloadURL,
+              type: "image"
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const json = await response.json();
+          if (json && json.length > 0) {
+            setPrescriptionData(JSON.parse(json[0].text));
+            setPrescriptionProgress(0); // Reset upload progress
+          } else {
+            console.error('Received empty or incorrect data:', json);
+          }
         })
 
-        const json = await res.json();
 
-        setPrescriptionData(JSON.parse(json[0].text))
+      } else {
+        console.error('No download URL received from Firebase');
       }
-
     } catch (error) {
-      console.error('Error uploading document:', error);
+      console.error('Error during the upload or post process:', error);
     }
+  };
 
-  }
+
 
   const uploadDocument = async () => {
     // with bytes transferred
@@ -178,7 +206,7 @@ const Files = () => {
       const downloadURL = await reference.getDownloadURL();
 
       if (downloadURL) {
-        folderExists(user?.uid, folderName).then(exists => {
+        folderExists(user?.uid as string, folderName).then(exists => {
           if (exists) {
             console.log("Folder exists");
             // Logic to add the file to the existing folder
@@ -188,7 +216,7 @@ const Files = () => {
               type: document.type
             };
 
-            updateFolderWithFile(user?.uid, folderName, newFile).then(() => {
+            updateFolderWithFile(user?.uid as string, folderName, newFile).then(() => {
               console.log("File added to the folder");
               setUploadProgress(0); // Reset upload progress
             })
@@ -201,7 +229,7 @@ const Files = () => {
             const folderExistsForUser = firestore().collection("documents").where("uid", "==", user?.uid).get()
               .then(snapshot => {
                 if (snapshot.empty) {
-                  //   // Logic to create a new folder and add the file
+                  // Logic to create a new folder and add the file
                   const documentInfo = {
                     uid: user?.uid, // User's UID from Firebase Authentication
                     folders: [{
@@ -223,7 +251,7 @@ const Files = () => {
                       console.error("Error adding document:", error);
                     });
                 } else {
-                  addFolderToDocument(user?.uid, folderName, {
+                  addFolderToDocument(user?.uid as string, folderName, {
                     uri: downloadURL,
                     name: document.name,
                     type: document.type
@@ -237,40 +265,9 @@ const Files = () => {
                 console.error("Error fetching documents: ", error);
                 return false;
               });
-
-
-            // if (folderExistsForUser) {
-
-            // } else {
-
-            // }
-
-
-            // const documentInfo = {
-            //   uid: user?.uid, // User's UID from Firebase Authentication
-            //   folders: [{
-            //     name: folderName,
-            //     files: [{
-            //       uri: downloadURL, // URL from the uploaded file
-            //       name: document.name, // Name of the file
-            //       type: document.type, // Type of the file, e.g., 'image/jpeg'
-            //     }]
-            //   }]
-            // };
-
-            // firestore().collection("documents").add(documentInfo)
-            //   .then((docRef) => {
-            //     console.log("Document added with ID:", docRef.id);
-            //     setUploadProgress(0); // Reset upload progress
-            //   })
-            //   .catch((error) => {
-            //     console.error("Error adding document:", error);
-            //   });
           }
         });
       }
-
-
 
       // Reset document state or perform other operations
       setDocument({
@@ -279,18 +276,54 @@ const Files = () => {
         type: ""
       });
 
-      // You might want to use the download URL in your application logic
-      // For example, save it to your database or state
     } catch (error) {
       console.error('Error uploading document:', error);
     }
   };
 
+  const savePrescriptionToDatabase = async () => {
+    if (prescriptionData.length > 0) {
+      try {
+        const querySnapshot = await firestore()
+          .collection("prescription")
+          .where('uid', '==', user?.uid)
+          .where('image', '==', prescriptionDownloadUrl)  // Assuming 'uri' is the field you're filtering by
+          .limit(1)  // As you expect only one document to match
+          .get();
+
+        if (querySnapshot.empty) {
+          console.log('No matching document found.');
+          console.log(file)
+          return;
+        }
+
+        const doc = querySnapshot.docs[0];
+        const docRef = firestore().collection("prescription").doc(doc.id);
+
+        await docRef.update({
+          prescriptionData: prescriptionData
+        });
+
+        setFile({
+          uri: "",
+          name: "",
+          type: ""
+        })
+        alert("Prescription saved successfully!");
+        setPrescriptionData([]); // Reset prescription data
+        setPrescriptionDownloadUrl(""); // Reset download URL
+        setPrescriptionProgress(0); // Reset upload progress
+
+        console.log('Prescription data updated successfully.');
+
+      } catch (error) {
+        console.error('Error updating prescription data:', error);
+      }
+    }
+  }
 
   return (
     <View style={{ minHeight: height }} className=' w-full bg-[#16161A] flex-col py-4 relative'>
-
-
       <View className=' px-4'>
         <View className=' flex-row h-fit items-center mb-5'>
           <TouchableOpacity onPress={() => router.back()}>
@@ -298,18 +331,18 @@ const Files = () => {
           </TouchableOpacity>
           <Text className=' text-white font-semibold text-2xl pt-[2px] ml-3'>{folderName}</Text>
         </View>
-
         <Divider backgroundColor='#7F8487' height={2} />
       </View>
-
-
-
 
       {filesData.length > 0 ? (
         <ScrollView>
           <View style={{ gap: 16 }} className=' p-4 pb-[340px]'>
-            {filesData && filesData?.map(file => (
-              <DocumentCard key={file.uri} title={file.name} type={file.type} />
+            {filesData && filesData?.map((file, index) => (
+              fileType === "image" ? (
+                <PrescriptionCard key={file?.uri} title={`Prescription ${index + 1}`}
+                  subtitle={`Ongoing`} />
+              ) :
+                <DocumentCard key={file?.uri} title={file.name} type={file.type} />
             ))}
           </View>
         </ScrollView>
@@ -326,14 +359,10 @@ const Files = () => {
         </View>
       )}
 
-
       <Model isVisible={prescriptionData.length > 0} title='Prescription Data' onClose={() => setPrescriptionData([])}>
         <View className='p-4 pb-6'>
 
-
-
           <ScrollView className='h-[300px]' alwaysBounceVertical showsVerticalScrollIndicator={false} fadingEdgeLength={100}>
-
             <View className=' gap-2 py-3'>
               {prescriptionData.length > 0 ? (
                 prescriptionData.map((prescription, index) => (
@@ -349,13 +378,11 @@ const Files = () => {
             </View>
           </ScrollView>
 
-
           <View className=' bg-slate-100 rounded-xl overflow-hidden'>
-            <Button color="#1A4CD3" title='Save prescription' />
+            <Button onPress={savePrescriptionToDatabase} color="#1A4CD3" title='Save prescription' />
           </View>
         </View>
       </Model>
-
 
       {showModel && <Model isVisible={showModel} onClose={() => setShowModel(false)} title={`Upload ${folderName}`}>
         {fileType === "any" ? (
@@ -377,7 +404,6 @@ const Files = () => {
             </View>
           </View>
         )}
-
       </Model>}
 
       {file.uri && <ImagePreview loading={prescriptionProgress} setLoading={setPrescriptionProgress} image={file.uri} setFile={setFile} onPressUpload={uploadPrescriptionToClaude} />}
@@ -406,7 +432,6 @@ const Files = () => {
           </View>
         </TouchableOpacity>
       )}
-
     </View>
   )
 }
