@@ -8,12 +8,13 @@ import {
   TouchableOpacity,
   Pressable,
 } from "react-native";
+import { Divider } from "./divider";
 
 type ModelProps = {
   children: ReactElement;
   isVisible: boolean;
-  onClose: () => void;
-  title:string
+  onClose?: () => void;
+  title: string
 };
 
 const Model = ({ children, isVisible, onClose, title }: ModelProps) => {
@@ -21,12 +22,13 @@ const Model = ({ children, isVisible, onClose, title }: ModelProps) => {
     <Modal animationType="fade" transparent={true} visible={isVisible}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <View className=" w-full rounded-[10px] h-fit flex-row items-center justify-between px-5 pt-4 pb-3 border-b">
-            <Text className="font-medium text-2xl">{title}</Text>
+          <View className=" w-full rounded-[10px] h-fit flex-row items-center justify-between px-5 pt-4 pb-3">
+            <Text className="font-medium text-lg text-white">{title}</Text>
             <Pressable onPress={onClose}>
-              <AntDesign name="close" size={20} />
+              <AntDesign name="close" color="#fff" size={20} />
             </Pressable>
           </View>
+          <Divider backgroundColor="#4E4E4E" height={1} />
           {children}
         </View>
       </View>
@@ -43,9 +45,9 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: "85%",
-    // height: 200,
-    backgroundColor: "white",
-    borderRadius: 10,
+    minHeight: 200,
+    backgroundColor: "#1C1E27",
+    borderRadius: 20,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

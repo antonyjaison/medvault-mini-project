@@ -4,6 +4,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { MenuProvider } from 'react-native-popup-menu';
 
 import { useColorScheme } from '@/components/useColorScheme';
 
@@ -49,18 +50,20 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name='(auth)' options={{ headerShown: false}}/>
-        <Stack.Screen name='profile' options={{
+      <MenuProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+                  <Stack.Screen name='profile' options={{
           title:"",
           headerStyle: {
             backgroundColor:"#16161A",
           },
         
         }}/>
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        </Stack>
+      </MenuProvider>
     </ThemeProvider>
   );
 }
