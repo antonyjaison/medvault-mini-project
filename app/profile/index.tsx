@@ -11,7 +11,7 @@ const ProfileScreen = () => {
 
       <View className=' w-full items-center mb-5'>
         {user?.photoURL ? (
-          <Image source={require('../assets/images/avatar.png')} style={{ width: 100, height: 100, borderRadius: 50 }} />
+          <Image source={require('../../assets/images/avatar.png')} style={{ width: 100, height: 100, borderRadius: 50 }} />
         ) : (
           <FontAwesome name='user-circle' size={100} color='white' />
         )}
@@ -30,9 +30,9 @@ const ProfileScreen = () => {
       <View>
         <Text className=' text-sm text-[#AFAFAF] mb-3'>Account</Text>
         <View style={{ gap: 10 }} className=''>
-          <ProfileSettingCard title='Edit profile' icon={<Ionicons name="person-outline" color="white" size={20} />} />
+          <ProfileSettingCard href='/' title='Edit profile' icon={<Ionicons name="person-outline" color="white" size={20} />} />
           {/* <ProfileSettingCard title='Food Schedules' icon={<Ionicons name='chevron-forward-outline' color="white" size={20} />}/> */}
-          <ProfileSettingCard title='Emergency Contact' icon={<Ionicons name='add-circle-outline' color="white" size={20} />} />
+          <ProfileSettingCard href='/profile/emergency-contacts' title='Emergency Contact' icon={<Ionicons name='add-circle-outline' color="white" size={20} />} />
         </View>
       </View>
       {/* <View>
@@ -44,18 +44,16 @@ const ProfileScreen = () => {
       <View>
         <Text className=' text-sm text-[#AFAFAF] mb-3'>More</Text>
         <View style={{ gap: 10 }} className=''>
-          <ProfileSettingCard title='About Us' icon={<Ionicons name='apps-outline' color="white" size={20} />} />
-          <ProfileSettingCard title='FAQ' icon={<Ionicons name='alert-circle-outline' color="white" size={20} />} />
-          <ProfileSettingCard title='Help & Feedback' icon={<Ionicons name='headset-outline' color="white" size={20} />} />
-          <ProfileSettingCard title='Support Us' icon={<Ionicons name='person-circle-outline' color="white" size={20} />} />
+          <ProfileSettingCard href='/' title='About Us' icon={<Ionicons name='apps-outline' color="white" size={20} />} />
+          <ProfileSettingCard href='/' title='FAQ' icon={<Ionicons name='alert-circle-outline' color="white" size={20} />} />
+          <ProfileSettingCard href='/' title='Help & Feedback' icon={<Ionicons name='headset-outline' color="white" size={20} />} />
+          <ProfileSettingCard href='/' title='Support Us' icon={<Ionicons name='person-circle-outline' color="white" size={20} />} />
           <View className='flex-row h-fit items-center'>
             <Ionicons name='log-out-outline' color="red" size={20} />
             <Text className='text-red-500 text-base ml-3'>Logout</Text>
           </View>
         </View>
       </View>
-
-
 
 
     </View>
