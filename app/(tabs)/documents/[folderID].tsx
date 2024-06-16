@@ -326,7 +326,7 @@ const Files = () => {
     <View style={{ minHeight: height }} className=' w-full bg-[#16161A] flex-col py-4 relative'>
       <View className=' px-4'>
         <View className=' flex-row h-fit items-center mb-5'>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.replace("/(tabs)/documents")}>
             <Ionicons name='chevron-back' size={25} color="#fff" />
           </TouchableOpacity>
           <Text className=' text-white font-semibold text-2xl pt-[2px] ml-3'>{folderName}</Text>

@@ -58,7 +58,7 @@ export default function TabTwoScreen() {
 
   const onSend = useCallback(async (messages = []) => {
     setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
-    const api = `${BASE_URL}/chat/${text}`;
+    const api = `${BASE_URL}/api/chat/${text}`;
     const response = await fetch(api);
     const data = await response.json()
 

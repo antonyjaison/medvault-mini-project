@@ -15,7 +15,7 @@ const ProfileSettingCard = ({ icon,title,color }: ProfileSettingCardProps) => {
                 {icon}
                 <Text className=' text-white text-base ml-3'>{title}</Text>
             </View>
-            <FontAwesome name='chevron-right' color="white" size={20} />
+            <Ionicons name='chevron-forward-outline' color="white" size={20} />
         </View>
     )
 }
