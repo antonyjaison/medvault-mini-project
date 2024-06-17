@@ -2,16 +2,19 @@ import { View, Text, TouchableNativeFeedback } from 'react-native'
 import React, { useState, useEffect } from 'react'; import { Ionicons } from '@expo/vector-icons'
 import * as Location from 'expo-location';
 import { useUser } from '@/store/userStore';
+import { useEmergencyContacts } from '@/store/useEmergencyContacts';
+import firestore from '@react-native-firebase/firestore';
+import { EmergencyContactType } from '@/lib/types/emergency-contact-types';
 
 const AlertButton = () => {
 
     const [location, setLocation] = useState({});
     const [errorMsg, setErrorMsg] = useState("");
     const { user } = useUser()
+    const { setEmergencyContacts, emergencyContacts } = useEmergencyContacts()
 
     useEffect(() => {
         (async () => {
-
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 setErrorMsg('Permission to access location was denied');
@@ -23,15 +26,19 @@ const AlertButton = () => {
         })();
     }, []);
 
-    console.log(location)
-
-    const emergencyContacts = [
-        {
-            name: 'Jaison T A',
-            phone: '+917736676823',
-            email: 'antonyjaison639@gmail.com',
-        }
-    ]
+    useEffect(() => {
+        firestore()
+            .collection('emergency-contacts')
+            .where('uid', '==', user?.uid)
+            .get()
+            .then(querySnapshot => {
+                const data: EmergencyContactType[] = []
+                querySnapshot.forEach(documentSnapshot => {
+                    data.push(documentSnapshot.data() as EmergencyContactType)
+                });
+                setEmergencyContacts(data)
+            });
+    }, [])
 
     const handlePressAlertButton = async () => {
         const apiUrl = `${process.env.BASE_URL}/api/emergency/send-emergency`

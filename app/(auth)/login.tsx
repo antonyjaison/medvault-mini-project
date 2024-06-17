@@ -110,11 +110,9 @@ const Login = () => {
             </View>
           </View>
 
-          <Text className=' text-center text-[#707070]'>By loggin in, you agree to out <Link href="/(auth)/login" className='text-[#1A4CD3]'>Privacy Policy</Link> & <Link href="/(auth)/login" className='text-[#1A4CD3]'>Terms and Conditions</Link></Text>
+          <Text className=' text-center text-[#707070]'>By loggin in, you agree to out <Link href="/(auth)/details" className='text-[#1A4CD3]'>Privacy Policy</Link> & <Link href="/(auth)/login" className='text-[#1A4CD3]'>Terms and Conditions</Link></Text>
           <Text className=' text-center text-white'>Don’t have an account? <Link href="/(auth)/register" className='text-[#1A4CD3]'> Create an account</Link></Text>
         </View>
-
-
 
       </View>
     </SafeAreaView>
