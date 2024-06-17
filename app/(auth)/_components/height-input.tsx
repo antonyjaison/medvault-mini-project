@@ -1,12 +1,19 @@
 import { Text, View, TextInput, TouchableNativeFeedback } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ScrollableInput from '@/components/scrollable-input'
 import { cn } from '@/lib/utils'
+import { useUser } from '@/store/userStore'
 
 const HeightInput = () => {
   const [selectedHeight, setSelectedHeight] = useState("")
   const [selectedOption, setSelectedOption] = useState<"ft" | "cm">('ft');
   const heightInInch = [];
+  const { setHeight, height } = useUser();
+
+  useEffect(() => {
+    setHeight(selectedHeight);
+  },[selectedHeight])
+  console.log(height);
 
   for (let feet = 4; feet <= 7; feet++) {
     for (let inches = 0; inches < 12; inches++) {

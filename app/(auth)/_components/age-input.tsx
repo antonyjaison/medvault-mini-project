@@ -1,10 +1,19 @@
 import ScrollableInput from '@/components/scrollable-input';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Text, View, ScrollView, Vibration, TouchableOpacity } from 'react-native';
+import { useUser } from '@/store/userStore';
 
 const AgeInput = () => {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const { setAge, age } = useUser();
+
+  useEffect(() => {
+    setAge(selectedIndex.toString());
+  },[selectedIndex])
+
+  console.log(age);
 
   const ageArray = Array.from({ length: 100 - 17 }, (_, index) => index + 18);
 

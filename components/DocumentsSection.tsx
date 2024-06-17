@@ -46,7 +46,7 @@ const DocumentsSection = () => {
     getPrescriptionDetails();
   }, []);
 
-  console.log(prescriptions)
+  // console.log(prescriptions)
 
   return (
     <View style={styles.container}>

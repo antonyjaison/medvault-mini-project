@@ -1,7 +1,11 @@
 import { Text, View, TextInput, TouchableNativeFeedback } from 'react-native'
 import React from 'react'
+import { useUser } from '@/store/userStore'
 
 export const ActivityInput = () => {
+  const { activity, setActivity} = useUser()
+
+  console.log(activity)
 
   const activities = ["Little or No Activity", "Lightly Active", "Moderately Active", "Very Active"]
 
@@ -13,7 +17,7 @@ export const ActivityInput = () => {
 
       <View style={{ gap: 14 }} className=' w-full px-4 pt-8'>
         {activities.map((activity, index) => (
-          <TouchableNativeFeedback onPress={() => console.log(activity)} key={index}>
+          <TouchableNativeFeedback onPress={() => setActivity(activity)} key={index}>
             <View style={{ elevation: 10 }} className=' w-full bg-[#1C1E27] py-6 rounded-lg'>
               <Text className=' text-[#707070] text-lg text-center '>{activity}</Text>
             </View>

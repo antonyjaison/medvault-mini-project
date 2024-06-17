@@ -1,9 +1,16 @@
 import { View, Text } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ScrollableInput from '@/components/scrollable-input'
+import { useUser } from '@/store/userStore'
 
 const WeightInput = () => {
   const [selectedWeight, setSelectedWeight] = useState(0)
+  const { setWeight, weight } = useUser();
+  useEffect(() => {
+    setWeight(selectedWeight.toString());
+  },[])
+
+  console.log(weight);
 
   const generateWeights = (start: number, end: number, step: number) => {
     const weights = [];

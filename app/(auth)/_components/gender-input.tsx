@@ -1,8 +1,11 @@
 import { View, Text, TextInput, TouchableOpacityBase, TouchableNativeFeedback, TouchableNativeFeedbackBase } from 'react-native'
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
+import { useUser } from '@/store/userStore'
 
 const GenderInput = () => {
+  const { gender, setGender } = useUser()
+  console.log(gender)
   return (
     <View className=''>
       <View className=' items-center gap-4 px-6'>
@@ -12,13 +15,19 @@ const GenderInput = () => {
         </Text>
 
         <View style={{ gap: 12 }} className=' flex-row'>
-          <TouchableNativeFeedback>
+          <TouchableNativeFeedback onPress={() => {
+            console.log("male")
+            setGender("M")
+          }}>
             <View style={{ elevation: 30 }} className=' rounded-lg w-32 h-32 bg-[#242429] items-center justify-center'>
               <Ionicons name='male' size={65} color="#4c4c4c" />
               <Text className=' text-lg text-[#707070]'>Male</Text>
             </View>
           </TouchableNativeFeedback>
-          <TouchableNativeFeedback>
+          <TouchableNativeFeedback onPress={() => {
+            console.log("female")
+            setGender("F")
+          }}>
             <View style={{ elevation: 30 }} className=' rounded-lg w-32 h-32 bg-[#242429] items-center justify-center'>
               <Ionicons name='female' size={65} color="#4c4c4c" />
               <Text className=' text-lg text-[#707070]'>Female</Text>

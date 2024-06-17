@@ -18,6 +18,7 @@ import firestore from '@react-native-firebase/firestore';
 import { updateFolderWithFile } from '@/lib/functons'
 import { useDocuments } from '@/store/useDocuments'
 import PrescriptionCard from '@/components/PrescriptionCard'
+import { GoogleGenerativeAI, HarmCategory } from "@google/generative-ai";
 
 type PrescriptionDataType = {
   name: string,
@@ -126,6 +127,8 @@ const Files = () => {
       console.error('No file provided for upload');
       return;
     }
+
+    
 
     // Create a unique file name, e.g., using a timestamp or a unique ID
     const uniqueFileName = `${Date.now()}_${file.name}`;

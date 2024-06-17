@@ -53,7 +53,7 @@ const Register = () => {
     } else {
       try {
         await auth().createUserWithEmailAndPassword(userDetails.email, userDetails.password);
-        router.push("/")
+        router.push("/(auth)/details")
         return;
       } catch (error: any) {
         if (error?.code === 'auth/email-already-in-use') {

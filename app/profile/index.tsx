@@ -1,11 +1,12 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, TouchableHighlight } from 'react-native'
 import React from 'react'
 import ProfileSettingCard from '@/components/profile-setting-card'
 import { FontAwesome, Ionicons } from '@expo/vector-icons'
 import { useUser } from '@/store/userStore'
+import { router } from 'expo-router'
 
 const ProfileScreen = () => {
-  const { user } = useUser()
+  const { user, setUser } = useUser()
   return (
     <View className='px-6 bg-[#16161A] gap-4 h-full' >
 
@@ -48,10 +49,15 @@ const ProfileScreen = () => {
           <ProfileSettingCard href='/' title='FAQ' icon={<Ionicons name='alert-circle-outline' color="white" size={20} />} />
           <ProfileSettingCard href='/' title='Help & Feedback' icon={<Ionicons name='headset-outline' color="white" size={20} />} />
           <ProfileSettingCard href='/' title='Support Us' icon={<Ionicons name='person-circle-outline' color="white" size={20} />} />
-          <View className='flex-row h-fit items-center'>
-            <Ionicons name='log-out-outline' color="red" size={20} />
-            <Text className='text-red-500 text-base ml-3'>Logout</Text>
-          </View>
+          <TouchableHighlight onPress={() => {
+            setUser(null)
+            router.replace('/login')
+          }}>
+            <View className='flex-row h-fit items-center'>
+              <Ionicons name='log-out-outline' color="red" size={20} />
+              <Text className='text-red-500 text-base ml-3'>Logout</Text>
+            </View>
+          </TouchableHighlight>
         </View>
       </View>
 

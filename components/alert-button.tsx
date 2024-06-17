@@ -37,7 +37,10 @@ const AlertButton = () => {
                     data.push(documentSnapshot.data() as EmergencyContactType)
                 });
                 setEmergencyContacts(data)
-            });
+            }).catch((error) => {
+                console.log("Error getting documents: ", error);
+                setEmergencyContacts([])
+            })
     }, [])
 
     const handlePressAlertButton = async () => {
