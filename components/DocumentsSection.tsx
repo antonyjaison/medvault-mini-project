@@ -34,6 +34,7 @@ const DocumentsSection = () => {
         }
 
         const prescriptions = querySnapshot.docs.map(doc => doc.data());
+        console.log('lorem',prescriptions);
         setPrerscriptions(prescriptions)
       } catch (error) {
         console.error(error);

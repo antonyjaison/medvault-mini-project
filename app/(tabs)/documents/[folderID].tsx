@@ -48,6 +48,8 @@ const Files = () => {
     type: ""
   })
 
+  console.log('filesdata',filesData)
+
   const [prescriptionData, setPrescriptionData] = useState<PrescriptionDataType[]>([])
 
   const { user } = useUser()
@@ -128,7 +130,7 @@ const Files = () => {
       return;
     }
 
-    
+
 
     // Create a unique file name, e.g., using a timestamp or a unique ID
     const uniqueFileName = `${Date.now()}_${file.name}`;
@@ -156,7 +158,7 @@ const Files = () => {
           image: downloadURL,
           prescriptionData: []
         }).then(async () => {
-          const response = await fetch(`${BASE_URL}/prescription/get-prescription`, {
+          const response = await fetch(`${BASE_URL}/api/prescription/prescription-data`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -172,8 +174,9 @@ const Files = () => {
           }
 
           const json = await response.json();
+          console.log(json);
           if (json && json.length > 0) {
-            setPrescriptionData(JSON.parse(json[0].text));
+            setPrescriptionData(JSON.parse(json));
             setPrescriptionProgress(0); // Reset upload progress
           } else {
             console.error('Received empty or incorrect data:', json);
@@ -342,10 +345,10 @@ const Files = () => {
           <View style={{ gap: 16 }} className=' p-4 pb-[340px]'>
             {filesData && filesData?.map((file, index) => (
               fileType === "image" ? (
-                <PrescriptionCard key={file?.uri} title={`Prescription ${index + 1}`}
+                <PrescriptionCard key={index} title={`Prescription ${index + 1}`}
                   subtitle={`Ongoing`} />
               ) :
-                <DocumentCard key={file?.uri} title={file.name} type={file.type} />
+                <DocumentCard url={file?.uri} key={index} title={file.name} type={file.type} />
             ))}
           </View>
         </ScrollView>

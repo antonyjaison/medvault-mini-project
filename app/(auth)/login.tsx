@@ -8,6 +8,7 @@ import Facebook from '@/assets/svg/facebook'
 import Apple from '@/assets/svg/apple'
 import { Link, router } from 'expo-router'
 import auth from '@react-native-firebase/auth';
+import { useUser } from '@/store/userStore'
 
 
 type UserCredentialType = {
@@ -17,6 +18,7 @@ type UserCredentialType = {
 
 const Login = () => {
   const { height } = Dimensions.get("screen")
+  const { setUser } = useUser()
 
   const [error, setError] = useState("")
 
@@ -42,8 +44,14 @@ const Login = () => {
     }
 
     try {
-      await auth().signInWithEmailAndPassword(userDetails.email, userDetails.password);
-      router.push("/")
+      await auth().signInWithEmailAndPassword(userDetails.email, userDetails.password).then(({ user }) => {
+        console.log(user)
+        if (user !== null) {
+          setUser(user)
+          router.push("/")
+        }
+      });
+      // router.push("/")
       return;
     } catch (error: any) {
       if (error?.code === 'auth/user-not-found') {

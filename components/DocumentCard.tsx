@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-import { TouchableNativeFeedback } from "react-native";
+import { TouchableNativeFeedback, Linking } from "react-native";
 import { AntDesign, Entypo, EvilIcons, FontAwesome, Ionicons } from "@expo/vector-icons";
 import {
   Menu,
@@ -11,24 +11,30 @@ import {
 import { Divider } from "./divider";
 import { Block } from "./document-folder";
 
-
-//               
-
 type DocumentCardProps = {
   onPress?: () => void;
   title?: string;
   subtitle?: string;
-  type?: string
-};
+  type?: string;
+  url?: string;
+}
 
 const DocumentCard = ({
   onPress,
   subtitle,
   title,
-  type
+  type,
+  url
 }: DocumentCardProps) => {
+  console.log('url of doc =>', url)
+
+  const openUrl = () => Linking.canOpenURL(url).then(() => {
+    console.log(url)
+    Linking.openURL(url);
+  });
+
   return (
-    <TouchableNativeFeedback>
+    <TouchableNativeFeedback onPress={openUrl}>
       <View className=" w-full bg-[#2F2F40] rounded-2xl h-fit flex-row items-center justify-between px-5 py-4 overflow-hidden">
         <View className="h-fit flex-row items-center gap-3">
           <FontAwesome name={type?.includes("image") ? "file-image-o" : "file-pdf-o"} size={30} color="#C10000" />
@@ -66,7 +72,7 @@ const DocumentCard = ({
         </Menu>
 
       </View>
-    </TouchableNativeFeedback>
+    </TouchableNativeFeedback >
   );
 };
 
