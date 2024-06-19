@@ -10,7 +10,7 @@ const AlertButton = () => {
 
     const [location, setLocation] = useState({});
     const [errorMsg, setErrorMsg] = useState("");
-    const { user } = useUser()
+    const { user, name } = useUser()
     const { setEmergencyContacts, emergencyContacts } = useEmergencyContacts()
 
     useEffect(() => {
@@ -45,6 +45,9 @@ const AlertButton = () => {
 
     const handlePressAlertButton = async () => {
         const apiUrl = `${process.env.BASE_URL}/api/emergency/send-emergency`
+
+        console.log('emergency api',apiUrl)
+
         const req = await fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -53,7 +56,7 @@ const AlertButton = () => {
             body: JSON.stringify({
                 userDetails:{
                     location,
-                    name: user?.displayName,
+                    name: name,
                 },
                 emergencyContacts
             })

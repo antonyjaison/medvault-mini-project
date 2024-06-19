@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, TouchableNativeFeedback, TextInput, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, Dimensions, TouchableNativeFeedback, TextInput, TouchableOpacity, Alert , ActivityIndicator} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Input from '@/components/input'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -14,9 +14,6 @@ import Model from '@/components/Model'
 import { useUser } from '@/store/userStore'
 
 type UserType = {
-  name: string,
-  age: string,
-  gender: "Female" | "Male" | "Other" | "",
   email: string,
   password: string,
   re_entered_password: string
@@ -24,15 +21,12 @@ type UserType = {
 
 const Register = () => {
   const { height } = Dimensions.get("screen")
-  const [genderModel, setGenderModel] = useState(false)
+  // const [genderModel, setGenderModel] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const { setUser } = useUser()
 
   const [userDetails, setUserDetails] = useState<UserType>({
-    name: '',
-    age: '',
-    gender: '',
     email: '',
     password: '',
     re_entered_password: ''
@@ -50,6 +44,7 @@ const Register = () => {
     let registrationError = "";
     if (userDetails.password !== userDetails.re_entered_password) {
       registrationError = "Passwords do not match";
+      setLoading(false)
     } else {
       try {
         await auth().createUserWithEmailAndPassword(userDetails.email, userDetails.password);
@@ -82,8 +77,8 @@ const Register = () => {
         <Text className=' text-white font-semibold text-2xl border-b-[1px] border-[#D6D6D6] pb-3 pt-5'>Create Account</Text>
 
         <View style={{ gap: 25 }} className=' my-6 py-3'>
-          <Input label='Name' placeholder='Enter name' labelBackgroundColor='#16161A' onChangeText={(text) => handleInputChange('name', text)} />
-          <View style={{ gap: 25 }} className=' flex-row'>
+          {/* <Input label='Name' placeholder='Enter name' labelBackgroundColor='#16161A' onChangeText={(text) => handleInputChange('name', text)} /> */}
+          {/* <View style={{ gap: 25 }} className=' flex-row'>
             <View className=' flex-1'>
               <Input keyboardType='numeric' label='Age' placeholder='Enter age' labelBackgroundColor='#16161A' onChangeText={(text) => handleInputChange('age', text)} />
             </View>
@@ -102,7 +97,7 @@ const Register = () => {
 
 
             </View>
-          </View>
+          </View> */}
           <Input label='Email' placeholder='Enter email' labelBackgroundColor='#16161A' onChangeText={(text) => handleInputChange('email', text)} />
           <Input label='Password' placeholder="Enter password" labelBackgroundColor='#16161A' onChangeText={(text) => handleInputChange('password', text)} />
           <Input label='Password' placeholder='Re-enter password' labelBackgroundColor='#16161A' onChangeText={(text) => handleInputChange('re_entered_password', text)} />
@@ -111,7 +106,8 @@ const Register = () => {
           <View>
             <TouchableNativeFeedback disabled={loading} onPress={handleRegister} >
               <View style={{ backgroundColor: '#1A4CD3' }} className=' rounded-lg p-3'>
-                <Text className=' text-white text-center text-lg'>Create account</Text>
+                {loading ? <ActivityIndicator color='#fff' /> : <Text className=' text-white text-center text-lg'>Create account</Text>}
+                {/* <Text className=' text-white text-center text-lg'>Create account</Text> */}
               </View>
             </TouchableNativeFeedback>
             {error ? <Text className=' text-center text-red-600 pt-3'>{error}</Text> : <Text></Text>}
@@ -158,7 +154,7 @@ const Register = () => {
 
       </View>
 
-      <Model isVisible={genderModel} onClose={() => setGenderModel(false)} title='Select gender'>
+      {/* <Model isVisible={genderModel} onClose={() => setGenderModel(false)} title='Select gender'>
         <View>
 
           <TouchableOpacity onPress={() => {
@@ -183,7 +179,7 @@ const Register = () => {
           </TouchableOpacity>
 
         </View>
-      </Model>
+      </Model> */}
 
     </SafeAreaView>
   )

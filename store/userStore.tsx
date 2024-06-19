@@ -24,6 +24,8 @@ type UserStoreType = {
     setGoogleFit: (googleFit: boolean) => void;
     gender: string;
     setGender: (gender: string) => void;
+    setUserDetails: (name: string, place: string, age: string, height: string, weight: string, activity: string
+    ) => void;
 };
 
 export const useUser = create(
@@ -50,8 +52,15 @@ export const useUser = create(
             googleFit: false,
             setGoogleFit: (googleFit) => set({ googleFit }),
             gender: "",
-            setGender: (gender) => set({ gender })
-
+            setGender: (gender) => set({ gender }),
+            setUserDetails: (name, place, age, height, weight, activity) => set({
+                name,
+                place,
+                age,
+                height,
+                weight,
+                activity,
+            }),
         }),
         {
             name: "userStore",

@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, TouchableNativeFeedback } from 'react-native'
+import { View, Text, Dimensions, TouchableNativeFeedback, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import Input from '@/components/input'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -40,6 +40,8 @@ const Login = () => {
     // check for email and password are entered
     if (!userDetails.email || !userDetails.password) {
       setError('Please enter email and password');
+            setLoading(false)
+
       return;
     }
 
@@ -63,6 +65,7 @@ const Login = () => {
       } else {
         setError('An error occurred while logging in');
       }
+      setLoading(false)
     }
     setLoading(false)
   }
@@ -79,7 +82,7 @@ const Login = () => {
           <View>
             <TouchableNativeFeedback disabled={loading} onPress={handleLogin} >
               <View style={{ backgroundColor: '#1A4CD3' }} className=' rounded-lg p-3'>
-                <Text className=' text-white text-center text-lg'>Login</Text>
+                {loading ? <ActivityIndicator color='#fff' /> : <Text className=' text-white text-center text-lg'>Login</Text>}
               </View>
             </TouchableNativeFeedback>
             {error ? <Text className=' text-center text-red-600 pt-3'>{error}</Text> : <Text></Text>}

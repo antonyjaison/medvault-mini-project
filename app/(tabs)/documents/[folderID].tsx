@@ -158,7 +158,11 @@ const Files = () => {
           image: downloadURL,
           prescriptionData: []
         }).then(async () => {
-          const response = await fetch(`${BASE_URL}/api/prescription/prescription-data`, {
+          const apiUrl = `${BASE_URL}/api/prescription/prescription-data`
+
+          console.log('Prescription API', apiUrl)
+
+          const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -262,6 +266,7 @@ const Files = () => {
                     name: document.name,
                     type: document.type
                   }).then(() => {
+                    
                     console.log("Folder added to the document");
                     setUploadProgress(0); // Reset upload progress
                   })

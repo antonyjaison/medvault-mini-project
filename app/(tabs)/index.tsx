@@ -13,12 +13,13 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { useUser } from "@/store/userStore";
 import { Redirect } from "expo-router";
+import firestore from '@react-native-firebase/firestore';
 
 export default function TabOneScreen() {
   const { prescriptions } = useDocuments();
   const [totalPrescriptions, setTotalPrescriptions] = useState([]);
   const [processedPrescriptions, setProcessedPrescriptions] = useState([]);
-  const { user, name } = useUser();
+  const { user, name, setUserDetails } = useUser();
 
   const timerGradient = [
     { color: "#6d9cf4", percentage: 50 },
@@ -31,6 +32,25 @@ export default function TabOneScreen() {
   const [currentTime, setCurrentTime] = useState(initialTime);
   const [timeRemaining, setTimeRemaining] = useState("");
   const [percentage, setPercentage] = useState(0);
+
+  useEffect(() => {
+    if (!user) {
+      return
+    }
+    
+    firestore()
+      .collection('Users')
+      .where('uid', '==', user?.uid)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          const data = documentSnapshot.data();
+          setUserDetails(data.name, data.place, data.age, data.height, data.weight, data.activity);
+        });
+      });
+  }, [])
+
+  console.log("User name:", name); // Debug log
 
   useEffect(() => {
     const updateTimer = () => {
@@ -207,7 +227,7 @@ export default function TabOneScreen() {
       <ScrollView>
         <Button title="Press to schedule a notification" onPress={() => {
           const now = new Date();
-          const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 25, 0); // 20:42 is 8:42 PM
+          const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 2, 30, 0); // 20:42 is 8:42 PM
           console.log("Setting notification for 20:42:", notificationTime); // Debug log
 
           schedulePushNotification("Medicine", "Dose", notificationTime);

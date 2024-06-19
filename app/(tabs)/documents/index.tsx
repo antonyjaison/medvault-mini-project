@@ -42,6 +42,8 @@ const Documents = () => {
     return () => subscriber();
   }, [])
 
+  console.log("documents", documents)
+
   const createFolder = () => {
     if (folderName) {
       firestore().collection("documents").where("uid", "==", user?.uid).get().then((snapshot) => {
