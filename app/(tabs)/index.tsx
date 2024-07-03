@@ -227,7 +227,7 @@ export default function TabOneScreen() {
       <ScrollView>
         <Button title="Press to schedule a notification" onPress={() => {
           const now = new Date();
-          const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 2, 30, 0); // 20:42 is 8:42 PM
+          const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 1, 0); // 20:42 is 8:42 PM
           console.log("Setting notification for 20:42:", notificationTime); // Debug log
 
           schedulePushNotification("Medicine", "Dose", notificationTime);

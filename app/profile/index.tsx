@@ -6,9 +6,11 @@ import { useUser } from '@/store/userStore'
 import { router } from 'expo-router'
 
 const ProfileScreen = () => {
-  const { user, setUser } = useUser()
+
+  const { user, setUser, name } = useUser()
+
   return (
-    <View className='px-6 bg-[#16161A] gap-4 h-full' >
+    <View className='px-6 bg-[#16161A] gap-4 h-full'>
 
       <View className=' w-full items-center mb-5'>
         {user?.photoURL ? (
@@ -17,7 +19,7 @@ const ProfileScreen = () => {
           <FontAwesome name='user-circle' size={100} color='white' />
         )}
         <View className='items-center mt-2'>
-          <Text className='text-2xl font-medium text-white'>{user?.displayName || "Antony Jaison"}</Text>
+          <Text className='text-2xl font-medium text-white'>{name}</Text>
           <Text className='text-sm text-[#AFAFAF]'>
             {user?.email}
           </Text>

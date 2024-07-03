@@ -41,7 +41,6 @@ const Login = () => {
     if (!userDetails.email || !userDetails.password) {
       setError('Please enter email and password');
             setLoading(false)
-
       return;
     }
 
