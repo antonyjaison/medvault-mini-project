@@ -274,7 +274,7 @@ export default function TabOneScreen() {
                 strokeWidth={16}
                 circleWidth={200}
                 gradient={timerGradient}
-                backgroundStrokeColor="none"
+                backgroundStrokeColor="rgba(26, 76, 211, 0.2)"
               />
               <View className="bg-transparent absolute">
                 <Text className="text-white font-bold text-xl">{timeRemaining}</Text>

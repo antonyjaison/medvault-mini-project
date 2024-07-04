@@ -1,8 +1,14 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import { EvilIcons, FontAwesome, Ionicons, AntDesign } from '@expo/vector-icons'
+import { AntDesign } from '@expo/vector-icons'
 
 const MedicationIntakeStatus = () => {
+
+    const now = new Date();
+    const hour = now.getHours();
+
+    console.log(hour)
+
     return (
         <View className=' border border-[#373745] rounded-2xl p-4'>
             <View>
@@ -12,15 +18,27 @@ const MedicationIntakeStatus = () => {
 
             <View className=' flex-row justify-around py-5'>
                 <View className=' w-fit items-center'>
-                    <AntDesign name='checkcircleo' size={25} color="#03D858" />
+                    {(hour >= 8) ? (
+                        <AntDesign name='checkcircleo' size={25} color="#03D858" />
+                    ) : (
+                        <AntDesign name='exclamationcircleo' size={25} color="red" />
+                    )}
                     <Text className='text-xs text-white mt-1'>Morning</Text>
                 </View>
                 <View className=' w-fit items-center'>
-                    <AntDesign name='checkcircleo' size={25} color="#03D858" />
+                    {(hour >= 13) ? (
+                        <AntDesign name='checkcircleo' size={25} color="#03D858" />
+                    ) : (
+                        <AntDesign name='exclamationcircleo' size={25} color="red" />
+                    )}
                     <Text className='text-xs text-white mt-1'>Noon</Text>
                 </View>
                 <View className=' w-fit items-center'>
-                    <AntDesign name='checkcircleo' size={25} color="#03D858"/>
+                    {(hour >= 20) ? (
+                        <AntDesign name='checkcircleo' size={25} color="#03D858" />
+                    ) : (
+                        <AntDesign name='exclamationcircleo' size={25} color="red" />
+                    )}
                     <Text className='text-xs text-white mt-1'>Night</Text>
                 </View>
             </View>

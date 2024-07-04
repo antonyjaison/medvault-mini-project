@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Avatar from "./Avatar";
 import { Link } from "expo-router";
 import { useUser } from "@/store/userStore";
+import { getGreeting } from "@/lib/time";
 
 const HomeHeaderTitle = () => {
   const { user, name } = useUser();
@@ -22,7 +23,7 @@ const HomeHeaderTitle = () => {
     <View className="flex-row">
       <Avatar />
       <View className=" ml-3">
-        <Text className="font-medium text-base text-white">Good Morning</Text>
+        <Text className="font-medium text-base text-white">{getGreeting()}</Text>
         <Text className=" text-xs text-white">{userName}</Text>
       </View>
     </View>
