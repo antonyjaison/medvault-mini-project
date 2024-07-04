@@ -44,7 +44,7 @@ const AlertButton = () => {
     }, [])
 
     const handlePressAlertButton = async () => {
-        const apiUrl = `${process.env.BASE_URL}/api/emergency/send-emergency`
+        const apiUrl = `${process.env.BASE_URL}/api/emergency2/send-emergency`
 
         console.log('emergency api',apiUrl)
 
