@@ -1,4 +1,4 @@
-export function getNextTimeInMilliseconds(times: string[]) {
+export function getNextTimeInMilliseconds(times) {
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
@@ -15,7 +15,6 @@ export function getNextTimeInMilliseconds(times: string[]) {
         }
     }
 
-    // If no upcoming time is found for today, take the earliest time for the next day
     if (nextTimeInMinutes === Infinity) {
         const [hour, minute] = times[0].split(':').map(Number);
         nextTimeInMinutes = hour * 60 + minute + 24 * 60; // Add 24 hours to account for the next day
@@ -34,17 +33,18 @@ export function getNextTimeInMilliseconds(times: string[]) {
     return nextTime - now;
 }
 
+
 export function getGreeting() {
     const now = new Date();
     const hour = now.getHours();
-  
+
     if (hour >= 5 && hour < 12) {
-      return "Good morning";
+        return "Good morning";
     } else if (hour >= 12 && hour < 17) {
-      return "Good afternoon";
+        return "Good afternoon";
     } else if (hour >= 17 && hour < 21) {
-      return "Good evening";
+        return "Good evening";
     } else {
-      return "Good night";
+        return "Good night";
     }
-  }
+}

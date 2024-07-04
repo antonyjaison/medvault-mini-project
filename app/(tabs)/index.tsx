@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Button, Platform, ScrollView, Text, View } from "react-native";
+import { Alert, Button, Platform, ScrollView, Text, View } from "react-native";
 import Timer from "@/components/timer";
 import DocumentsSection from "@/components/DocumentsSection";
 import InsightSection from "@/components/InsightSection";
@@ -30,7 +30,24 @@ export default function TabOneScreen() {
   ];
 
   const times = ['08:00', '13:00', '20:00'];
+
+  const calculateIntervals = (times) => {
+    const intervals = [];
+    for (let i = 0; i < times.length; i++) {
+      const [startHour, startMinute] = times[i].split(':').map(Number);
+      const [endHour, endMinute] = times[(i + 1) % times.length].split(':').map(Number);
+
+      const start = startHour * 60 + startMinute;
+      const end = endHour * 60 + endMinute;
+      const duration = (end >= start) ? end - start : (24 * 60) - start + end;
+
+      intervals.push({ start, end, duration });
+    }
+    return intervals;
+  };
+
   const millisecondsToNextTime = getNextTimeInMilliseconds(times);
+  const intervals = calculateIntervals(times);
 
   const initialTime = Date.now();
   const finalTime = initialTime + millisecondsToNextTime;
@@ -39,25 +56,30 @@ export default function TabOneScreen() {
   const [timeRemaining, setTimeRemaining] = useState("");
   const [percentage, setPercentage] = useState(0);
 
-  // console.log("User name:", name); // Debug log
-
   useEffect(() => {
     const updateTimer = () => {
-      const now = Date.now();
-      setCurrentTime(now);
+      const now = new Date();
+      const nowInMinutes = now.getHours() * 60 + now.getMinutes();
+
+      const interval = intervals.find(interval => nowInMinutes >= interval.start && nowInMinutes < interval.end)
+        || intervals[intervals.length - 1];
+
+      const elapsed = (nowInMinutes >= interval.start)
+        ? nowInMinutes - interval.start
+        : (24 * 60) - interval.start + nowInMinutes;
+
+      const newPercentage = (elapsed / interval.duration) * 100;
+
+      setPercentage(newPercentage);
+
       const timeLeft = Math.max(finalTime - now, 0);
-      const totalDuration = finalTime - initialTime;
-      const timeElapsed = now - initialTime;
-      const newPercentage = (timeElapsed / totalDuration) * 100;
-
-      setPercentage(Math.min(newPercentage, 100));
-
       const hours = Math.floor(timeLeft / (1000 * 60 * 60));
       const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
       setTimeRemaining(`${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`);
 
       if (timeLeft <= 0) {
+        Alert.alert("Time's up!", "Time to take your medicine.");
         clearInterval(timerInterval);
         setTimeRemaining("00 : 00 : 00");
         setPercentage(100);
@@ -67,7 +89,6 @@ export default function TabOneScreen() {
     const timerInterval = setInterval(updateTimer, 1000);
     return () => clearInterval(timerInterval);
   }, [finalTime, initialTime]);
-
 
 
   useEffect(() => {
@@ -258,13 +279,13 @@ export default function TabOneScreen() {
   return (
     <View>
       <ScrollView>
-        <Button title="Press to schedule a notification" onPress={() => {
+        {/* <Button title="Press to schedule a notification" onPress={() => {
           const now = new Date();
           const notificationTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 1, 0); // 20:42 is 8:42 PM
           console.log("Setting notification for 20:42:", notificationTime); // Debug log
 
           schedulePushNotification("Medicine", "Dose", notificationTime);
-        }} />
+        }} /> */}
         <View style={{ gap: 34 }} className="h-full bg-[#16161A] w-full px-4 flex-col py-4">
           <View className="bg-transparent w-full items-center">
             <View className="relative bg-transparent justify-center items-center">

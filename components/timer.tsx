@@ -1,28 +1,61 @@
-import React from "react";
-import { Circle, Svg, Defs, LinearGradient, Stop } from 'react-native-svg'
+import React, { useEffect, useRef } from "react";
+import { Circle, Svg, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { Animated, Easing } from 'react-native';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 type GradientType = {
-  color: string,
-  percentage: number
-}
+  color: string;
+  percentage: number;
+};
 
 type TimerProps = {
-  percentage: number,
-  circleWidth: number,
-  radius: number,
-  strokeWidth: number,
-  backgroundStrokeColor: string,
-  gradient: GradientType[]
-}
+  percentage: number;
+  circleWidth: number;
+  radius: number;
+  strokeWidth: number;
+  backgroundStrokeColor: string;
+  gradient: GradientType[];
+};
 
-const Timer = ({ circleWidth, percentage, gradient, radius, strokeWidth, backgroundStrokeColor }: TimerProps) => {
+const Timer = ({
+  circleWidth,
+  percentage,
+  gradient,
+  radius,
+  strokeWidth,
+  backgroundStrokeColor,
+}: TimerProps) => {
   const dashArray = radius * Math.PI * 2;
-  const dashOffset = dashArray - (dashArray * percentage) / 100
+  const animatedValue = useRef(new Animated.Value(percentage)).current;
+
+  useEffect(() => {
+    const animation = Animated.timing(animatedValue, {
+      toValue: percentage,
+      duration: 1000,
+      useNativeDriver: true,
+      easing: Easing.inOut(Easing.ease),
+    });
+
+    animation.start();
+
+    return () => {
+      animation.stop();
+    };
+  }, [percentage, animatedValue]);
+
+  const dashOffset = animatedValue.interpolate({
+    inputRange: [0, 100],
+    outputRange: [dashArray, 0],
+  });
+
   return (
     <Svg width={circleWidth} height={circleWidth} viewBox={`0 0 ${circleWidth} ${circleWidth}`}>
       <Defs>
         <LinearGradient id="gradient">
-          {gradient.map((data, index) => <Stop key={index} offset={`${data.percentage}%`} stopColor={data.color} />)}
+          {gradient.map((data, index) => (
+            <Stop key={index} offset={`${data.percentage}%`} stopColor={data.color} />
+          ))}
         </LinearGradient>
       </Defs>
       <Circle
@@ -33,7 +66,7 @@ const Timer = ({ circleWidth, percentage, gradient, radius, strokeWidth, backgro
         strokeWidth={strokeWidth}
         r={radius}
       />
-      <Circle
+      <AnimatedCircle
         cx={circleWidth / 2}
         cy={circleWidth / 2}
         strokeWidth={strokeWidth}
