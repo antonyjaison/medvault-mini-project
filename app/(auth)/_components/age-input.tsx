@@ -13,7 +13,7 @@ const AgeInput = () => {
     setAge(selectedIndex.toString());
   },[selectedIndex])
 
-  console.log(age);
+  // console.log(age);
 
   const ageArray = Array.from({ length: 100 - 17 }, (_, index) => index + 18);
 

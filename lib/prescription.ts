@@ -21,11 +21,11 @@ const getTimesForFrequency = (frequency: number): string[] => {
     // console.log(frequency)
     switch (frequency) {
         case 1:
-            return ['09:00'];
+            return ['08:00'];
         case 2:
             return ['08:00', '20:00'];
         case 3:
-            return ['07:00', '13:00', '19:00'];
+            return ['08:00', '13:00', '20:00'];
         default:
             return [];
     }

@@ -15,6 +15,9 @@ import { useUser } from "@/store/userStore";
 import { Redirect } from "expo-router";
 import firestore from '@react-native-firebase/firestore';
 
+import { cancelAllScheduledNotifications, getScheduledNotifications } from "@/lib/notification";
+import { getNextTimeInMilliseconds } from "@/lib/time";
+
 export default function TabOneScreen() {
   const { prescriptions } = useDocuments();
   const [totalPrescriptions, setTotalPrescriptions] = useState([]);
@@ -26,31 +29,17 @@ export default function TabOneScreen() {
     { color: "#1A4CD3", percentage: 100 },
   ];
 
+  const times = ['08:00', '13:00', '20:00'];
+  const millisecondsToNextTime = getNextTimeInMilliseconds(times);
+
   const initialTime = Date.now();
-  const finalTime = initialTime + 60 * 1000;
+  const finalTime = initialTime + millisecondsToNextTime;
 
   const [currentTime, setCurrentTime] = useState(initialTime);
   const [timeRemaining, setTimeRemaining] = useState("");
   const [percentage, setPercentage] = useState(0);
 
-  useEffect(() => {
-    if (!user) {
-      return
-    }
-    
-    firestore()
-      .collection('Users')
-      .where('uid', '==', user?.uid)
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(documentSnapshot => {
-          const data = documentSnapshot.data();
-          setUserDetails(data.name, data.place, data.age, data.height, data.weight, data.activity);
-        });
-      });
-  }, [])
-
-  console.log("User name:", name); // Debug log
+  // console.log("User name:", name); // Debug log
 
   useEffect(() => {
     const updateTimer = () => {
@@ -77,25 +66,60 @@ export default function TabOneScreen() {
 
     const timerInterval = setInterval(updateTimer, 1000);
     return () => clearInterval(timerInterval);
-  }, []);
+  }, [finalTime, initialTime]);
+
+
+
+  useEffect(() => {
+    if (!user) {
+      return
+    }
+
+    firestore()
+      .collection('Users')
+      .where('uid', '==', user?.uid)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          const data = documentSnapshot.data();
+          setUserDetails(data.name, data.place, data.age, data.height, data.weight, data.activity);
+        });
+      });
+  }, [])
 
   useEffect(() => {
     const allPrescriptions = prescriptions.flatMap(prescription => prescription.prescriptionData);
     setTotalPrescriptions(allPrescriptions);
-    console.log("Total Prescriptions:", allPrescriptions); // Logging prescriptions data
+    // console.log("Total Prescriptions:", allPrescriptions); // Logging prescriptions data
   }, [prescriptions]);
 
   useEffect(() => {
     const prescriptionsWithTime = addTimingsToPrescriptions(totalPrescriptions);
     setProcessedPrescriptions(prescriptionsWithTime);
-    console.log("Processed Prescriptions:", prescriptionsWithTime); // Logging processed prescriptions
+    // console.log("Processed Prescriptions:", prescriptionsWithTime); // Logging processed prescriptions
   }, [totalPrescriptions]);
 
   useEffect(() => {
-    const scheduleNext24Hours = () => {
+    const scheduledNotifications = async () => {
+      const notifications = await getScheduledNotifications();
+      // console.log("Scheduled Notifications:", notifications);
+      console.log("Scheduled Notifications Length:", notifications.length)
+    }
+
+    scheduledNotifications()
+    const cancelNotifications = async () => {
+      await cancelAllScheduledNotifications();
+    }
+    // cancelNotifications()
+  }, [])
+
+  useEffect(() => {
+    const scheduleNext24Hours = async () => {
       const now = new Date();
       const tomorrow = new Date(now);
       tomorrow.setDate(now.getDate() + 1);
+
+      const existingNotifications = await Notifications.getAllScheduledNotificationsAsync();
 
       processedPrescriptions.forEach((prescription, prescriptionIndex) => {
         prescription.times.forEach((time, timeIndex) => {
@@ -106,9 +130,18 @@ export default function TabOneScreen() {
             notificationTime.setDate(notificationTime.getDate() + 1);
           }
 
-          if (notificationTime < tomorrow) {
-            console.log(`Prescription Index: ${prescriptionIndex}, Time Index: ${timeIndex}, Notification Time: ${notificationTime}`);
-            schedulePushNotification(prescription.Medicine, prescription.dose, notificationTime);
+          const body = `Time to take your medicine: ${prescription.name} - ${prescription.dose}`;
+
+          const isDuplicate = existingNotifications.some(notification => {
+            const trigger = notification.trigger;
+            return trigger.type === 'date' &&
+              new Date(trigger.value).getTime() === notificationTime.getTime() &&
+              notification.content.body === body;
+          });
+
+          if (!isDuplicate && notificationTime < tomorrow) {
+            // console.log(`Prescription Index: ${prescriptionIndex}, Time Index: ${timeIndex}, Notification Time: ${notificationTime}`);
+            schedulePushNotification(prescription.name, prescription.dose, notificationTime);
           }
         });
       });
@@ -145,7 +178,7 @@ export default function TabOneScreen() {
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
+      // console.log(response);
     });
 
     return () => {
@@ -165,7 +198,7 @@ export default function TabOneScreen() {
         },
         trigger: { date: notificationTime },
       });
-      console.log("Scheduled notification for:", medicine, dose, notificationTime);
+      // console.log("Scheduled notification for:", medicine, dose, notificationTime);
     } catch (error) {
       console.error("Failed to schedule the notification:", error);
     }
@@ -205,7 +238,7 @@ export default function TabOneScreen() {
             projectId,
           })
         ).data;
-        console.log(token);
+        // console.log(token);
       } catch (e) {
         token = `${e}`;
       }
@@ -216,7 +249,7 @@ export default function TabOneScreen() {
     return token;
   }
 
-  console.log("User:", name); // Debug log
+  // console.log("User:", name); // Debug log
 
   if (!user) {
     return <Redirect href="/login" />;

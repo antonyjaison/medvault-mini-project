@@ -5,7 +5,7 @@ import { useUser } from '@/store/userStore'
 export const ActivityInput = () => {
   const { activity, setActivity} = useUser()
 
-  console.log(activity)
+  // console.log(activity)
 
   const activities = ["Little or No Activity", "Lightly Active", "Moderately Active", "Very Active"]
 

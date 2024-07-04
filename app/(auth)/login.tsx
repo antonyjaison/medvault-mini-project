@@ -46,7 +46,7 @@ const Login = () => {
 
     try {
       await auth().signInWithEmailAndPassword(userDetails.email, userDetails.password).then(({ user }) => {
-        console.log(user)
+        // console.log(user)
         if (user !== null) {
           setUser(user)
           router.push("/")
