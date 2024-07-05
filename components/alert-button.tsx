@@ -44,7 +44,12 @@ const AlertButton = () => {
     }, [])
 
     const handlePressAlertButton = async () => {
-        const apiUrl = `${process.env.BASE_URL}/api/emergency2/send-emergency`
+
+        const baseUrl = "https://f6b3-2401-4900-666f-b6bf-163a-8117-3d76-1c19.ngrok-free.app"
+
+        // ${process.env.BASE_URL}
+
+        const apiUrl = `${baseUrl}/api/emergency2/send-emergency`
 
         console.log('emergency api',apiUrl)
 
@@ -63,7 +68,6 @@ const AlertButton = () => {
         })
         const res = await req.json()
         console.log(res)
-
     }
 
     return (
@@ -78,8 +82,3 @@ const AlertButton = () => {
 }
 
 export default AlertButton
-
-
-// location
-// pohone no
-// email id

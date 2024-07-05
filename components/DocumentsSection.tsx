@@ -58,7 +58,7 @@ const DocumentsSection = () => {
         <Text>{error}</Text>
       ) : (
         <ScrollView  showsHorizontalScrollIndicator={false}>
-          {prescriptions.map((prescription, index) => (
+          {prescriptions.slice(0,3).map((prescription, index) => (
             <PrescriptionCard
               key={index}
               title={`Prescription ${index + 1}`} // Assuming 'name' is a field in your document
